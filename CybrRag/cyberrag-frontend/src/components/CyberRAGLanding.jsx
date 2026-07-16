@@ -521,16 +521,16 @@ const Carousel3DHero = ({ transparent = false }) => {
 
 // --- UI Widgets for Scrolling Sections ---
 const IngestionUI = () => (
-  <Box sx={{ width: '640px', height: '420px', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
+  <Box sx={{ width: '100%', maxWidth: '640px', minHeight: '420px', height: 'auto', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
     {/* Header Bar */}
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Box sx={{ display: 'flex', gap: 0.8 }}>
           <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#E25C5C', border: '1px solid #111' }} />
           <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#F1C40F', border: '1px solid #111' }} />
           <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#2ECC71', border: '1px solid #111' }} />
         </Box>
-        <Typography sx={{ ml: 1, fontSize: '0.8rem', fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
+        <Typography sx={{ ml: 1, fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
           INGESTION PIPELINE // DAEMON v4.2
         </Typography>
       </Box>
@@ -544,7 +544,7 @@ const IngestionUI = () => (
       </Box>
     </Box>
 
-    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 2.5 }}>
+    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1.25fr 1fr' }, gap: 2.5 }}>
       {/* Left Column: Live Stream & Pipeline Stats */}
       <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', bgcolor: '#111', borderRadius: '12px', p: 1.8, border: '1.5px solid #1A1A1A', overflow: 'hidden', position: 'relative' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, pb: 0.8, borderBottom: '1px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
@@ -635,14 +635,14 @@ const IngestionUI = () => (
 );
 
 const DetectionUI = () => (
-  <Box sx={{ width: '640px', height: '420px', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
+  <Box sx={{ width: '100%', maxWidth: '640px', minHeight: '420px', height: 'auto', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
     {/* Header Bar */}
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Box sx={{ px: 1.2, py: 0.3, bgcolor: '#E25C5C', color: '#fff', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
           META-ALERT FIRED
         </Box>
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
+        <Typography sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
           COMPOUND HEURISTIC CORRELATION
         </Typography>
       </Box>
@@ -656,7 +656,7 @@ const DetectionUI = () => (
       </Box>
     </Box>
 
-    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 2.5 }}>
+    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1.25fr 1fr' }, gap: 2.5 }}>
       {/* Left Panel: Live Lateral Movement Attack Graph */}
       <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', bgcolor: '#111', borderRadius: '12px', p: 1.8, border: '1.5px solid #1A1A1A', position: 'relative', overflow: 'hidden', justifyContent: 'space-between' }}>
         {/* Background Grid */}
@@ -758,14 +758,14 @@ const DetectionUI = () => (
 );
 
 const EnrichmentUI = () => (
-  <Box sx={{ width: '640px', height: '420px', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
+  <Box sx={{ width: '100%', maxWidth: '640px', minHeight: '420px', height: 'auto', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
     {/* Header Bar */}
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Box sx={{ px: 1.2, py: 0.3, bgcolor: '#8E9C7E', color: '#111', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
           OSINT FEDERATION
         </Box>
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
+        <Typography sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
           MULTI-SOURCE KNOWLEDGE ENRICHMENT
         </Typography>
       </Box>
@@ -779,7 +779,7 @@ const EnrichmentUI = () => (
       </Box>
     </Box>
 
-    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 2.5 }}>
+    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1.2fr 1fr' }, gap: 2.5 }}>
       {/* Left Panel: Relational Intelligence Graph */}
       <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', bgcolor: '#111', borderRadius: '12px', p: 1.8, border: '1.5px solid #1A1A1A', position: 'relative', overflow: 'hidden', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', pb: 0.8, borderBottom: '1px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
@@ -851,14 +851,14 @@ const EnrichmentUI = () => (
 );
 
 const ResponseUI = () => (
-  <Box sx={{ width: '640px', height: '420px', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
+  <Box sx={{ width: '100%', maxWidth: '640px', minHeight: '420px', height: 'auto', bgcolor: '#F9F8F6', borderRadius: '20px', border: '2px solid #1A1A1A', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', fontFamily: fontSans, boxShadow: '8px 8px 0px rgba(26,26,26,0.1)' }}>
     {/* Header Bar */}
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pb: 1.5, borderBottom: '2px solid #1A1A1A', flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <Box sx={{ px: 1.2, py: 0.3, bgcolor: '#7BA4B8', color: '#111', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
           SOAR ACTIVE
         </Box>
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
+        <Typography sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' }, fontWeight: 700, color: '#1A1A1A', letterSpacing: '0.05em' }}>
           REAL-TIME AUTONOMOUS MITIGATION
         </Typography>
       </Box>
@@ -872,7 +872,7 @@ const ResponseUI = () => (
       </Box>
     </Box>
 
-    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.1fr 1.1fr', gap: 2.5 }}>
+    <Box sx={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1.1fr 1.1fr' }, gap: 2.5 }}>
       {/* Left Panel: SOAR Playbook Execution Matrix */}
       <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', bgcolor: '#fff', borderRadius: '12px', p: 1.8, border: '1.5px solid #1A1A1A', overflow: 'hidden' }}>
         <Box>
@@ -1057,21 +1057,21 @@ playbook contain_ransomware {
         }}
       />
 
-      <Box sx={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', maxWidth: '1600px', margin: '0 auto' }}>
+      <Box sx={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: 'center', justifyContent: 'space-between', maxWidth: '1600px', margin: '0 auto', px: { xs: 2, sm: 4, lg: 6 } }}>
 
         {/* Left Sidebar Indicator */}
-        <Box sx={{ width: { xs: '0%', md: '10%' }, display: { xs: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
+        <Box sx={{ width: { xs: '0%', lg: '8%' }, display: { xs: 'none', lg: 'flex' }, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
           <Typography sx={{ color: '#1A1A1A', fontFamily: fontSans, fontWeight: 600, fontSize: '0.9rem', mb: 15 }}>{id}</Typography>
           <Typography sx={{ color: '#1A1A1A', fontFamily: fontSans, fontWeight: 600, fontSize: '0.9rem', mt: 15, transform: 'rotate(-90deg)', whiteSpace: 'nowrap', letterSpacing: '0.2em', textTransform: 'uppercase' }}>{category}</Typography>
         </Box>
 
         {/* Text Content Area (Left Side) */}
-        <Box sx={{ width: { xs: '100%', md: '45%' }, display: 'flex', flexDirection: 'column', justifyContent: 'center', p: { xs: 4, md: 8, lg: 10 } }}>
+        <Box sx={{ width: { xs: '100%', lg: '42%' }, display: 'flex', flexDirection: 'column', justifyContent: 'center', p: { xs: 2, sm: 4, md: 6, lg: 8 } }}>
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
             <Box sx={{ bgcolor: pillColor, color: '#fff', borderRadius: '50px', px: 3, py: 0.8, mb: 4, display: 'inline-flex', fontFamily: fontSans, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {pillText}
             </Box>
-            <Typography sx={{ color: '#1A1A1A', fontFamily: fontSans, fontWeight: 500, fontSize: { xs: '2.4rem', lg: '3.6rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4 }}>
+            <Typography sx={{ color: '#1A1A1A', fontFamily: fontSans, fontWeight: 500, fontSize: { xs: '2.2rem', sm: '2.8rem', lg: '3.6rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4 }}>
               {title}
             </Typography>
 
@@ -1082,7 +1082,7 @@ playbook contain_ransomware {
                   bgcolor: isFlipped ? '#333333' : '#1A1A1A',
                   color: '#fff',
                   borderRadius: '0px', // Sharp Swiss architectural feel
-                  px: 5, py: 2,
+                  px: { xs: 3, sm: 5 }, py: 2,
                   border: '1px solid rgba(255,255,255,0.2)',
                   fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem',
                   textTransform: 'uppercase', letterSpacing: '0.12em',
@@ -1097,7 +1097,7 @@ playbook contain_ransomware {
         </Box>
 
         {/* Widget Area (Right Side) */}
-        <Box sx={{ width: { xs: '100%', md: '45%' }, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <Box sx={{ width: { xs: '100%', lg: '50%' }, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', my: { xs: 4, lg: 0 } }}>
           {/* Ambient subtle monochrome glow */}
           <motion.div
             animate={{ scale: [1, 1.05, 1], opacity: [0.1, 0.2, 0.1] }}
@@ -1108,7 +1108,7 @@ playbook contain_ransomware {
           <motion.div
             animate={{ opacity: isFlipped ? 0.2 : 1, scale: isFlipped ? 0.95 : 1 }}
             transition={{ duration: 0.4 }}
-            style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '540px' }}
+            style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '680px', display: 'flex', justifyContent: 'center' }}
           >
             {uiWidget}
           </motion.div>
@@ -1365,7 +1365,7 @@ const GraphVisual = () => {
           <motion.circle key={i} cx={`${n.x}%`} cy={`${n.y}%`} r={i === 0 ? 8 : 5} fill={i === 0 ? '#D3A376' : '#2A2010'}
             stroke="#D3A376" strokeWidth="1.5"
             animate={{ r: i === 0 ? [8, 10, 8] : [4, 6, 4], opacity: [0.7, 1, 0.7] }}
-            stroke="rgba(0,0,0,0.15)" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: i * 0.2 }} />
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: i * 0.2 }} />
         ))}
       </svg>
       {nodes.map((n, i) => (
@@ -1771,7 +1771,7 @@ const ArchitectureHoverExpand = ({ transparent = false }) => {
                 height: '100%',
                 boxSizing: 'border-box',
                 willChange: 'transform, width, flex-grow',
-                width: isActive ? '760px' : (activeCardIndex === null ? '100%' : '74px'),
+                width: isActive ? 'min(760px, calc(100vw - 320px))' : (activeCardIndex === null ? '100%' : 'min(74px, 10vw)'),
                 flexShrink: isActive ? 0 : 1,
                 flexGrow: isActive ? 0 : (activeCardIndex === null ? 1 : 0),
                 transition: 'width 0.65s cubic-bezier(0.16, 1, 0.3, 1), flex-grow 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -1853,7 +1853,8 @@ const ArchitectureHoverExpand = ({ transparent = false }) => {
                           flexDirection: 'column',
                           justifyContent: 'space-between',
                           height: 'calc(100% - 72px)',
-                          width: '500px',
+                          width: '100%',
+                          maxWidth: '500px',
                           bgcolor: 'rgba(11, 15, 20, 0.68)',
                           backdropFilter: 'blur(16px)',
                           WebkitBackdropFilter: 'blur(16px)',
@@ -2668,7 +2669,8 @@ const PrototypeFlowSection = () => {
         pb: { xs: 4, md: 5 },
         px: { xs: 4, md: 6 },
         overflow: 'hidden',
-        bgcolor: '#122018',
+        bgcolor: activeIndex === 3 ? '#EAD85B' : '#122018',
+        transition: 'background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         fontFamily: fontSans,
         userSelect: 'none'
       }}
@@ -2821,33 +2823,37 @@ const PrototypeFlowSection = () => {
               {/* ── Architectural Blueprint Grid & Simple Geometric Lines ── */}
               <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
                 <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
-                  <line x1="0" y1="20%" x2="100%" y2="20%" stroke="#8DA696" strokeWidth="1" opacity="0.22" />
-                  <line x1="15%" y1="18.5%" x2="15%" y2="21.5%" stroke="#8DA696" strokeWidth="1.5" opacity="0.4" />
-                  <line x1="50%" y1="18.5%" x2="50%" y2="21.5%" stroke="#8DA696" strokeWidth="1.5" opacity="0.4" />
-                  <line x1="85%" y1="18.5%" x2="85%" y2="21.5%" stroke="#8DA696" strokeWidth="1.5" opacity="0.4" />
+                  <line x1="0" y1="20%" x2="100%" y2="20%" stroke="#1A1A1A" strokeWidth="1" opacity="0.22" />
+                  <line x1="15%" y1="18.5%" x2="15%" y2="21.5%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.4" />
+                  <line x1="50%" y1="18.5%" x2="50%" y2="21.5%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.4" />
+                  <line x1="85%" y1="18.5%" x2="85%" y2="21.5%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.4" />
 
-                  <line x1="0" y1="82%" x2="100%" y2="82%" stroke="#8DA696" strokeWidth="1" strokeDasharray="6 8" opacity="0.2" />
-                  <polygon points="14%,82% 14.4%,81.2% 14.8%,82% 14.4%,82.8%" fill="#8DA696" opacity="0.5" />
-                  <polygon points="86%,82% 86.4%,81.2% 86.8%,82% 86.4%,82.8%" fill="#8DA696" opacity="0.5" />
+                  <line x1="0" y1="82%" x2="100%" y2="82%" stroke="#1A1A1A" strokeWidth="1" strokeDasharray="6 8" opacity="0.2" />
+                  <circle cx="14.4%" cy="82%" r="4" fill="#1A1A1A" opacity="0.5" />
+                  <circle cx="86.4%" cy="82%" r="4" fill="#1A1A1A" opacity="0.5" />
 
-                  <line x1="22%" y1="0" x2="22%" y2="100%" stroke="#8DA696" strokeWidth="1" strokeDasharray="3 9" opacity="0.15" />
-                  <line x1="78%" y1="0" x2="78%" y2="100%" stroke="#8DA696" strokeWidth="1" strokeDasharray="3 9" opacity="0.15" />
+                  <line x1="22%" y1="0" x2="22%" y2="100%" stroke="#1A1A1A" strokeWidth="1" strokeDasharray="3 9" opacity="0.15" />
+                  <line x1="78%" y1="0" x2="78%" y2="100%" stroke="#1A1A1A" strokeWidth="1" strokeDasharray="3 9" opacity="0.15" />
 
-                  <path d="M 22% 19.3% V 20.7% M 21.6% 20% H 22.4%" stroke="#8DA696" strokeWidth="1.5" opacity="0.45" />
-                  <path d="M 78% 19.3% V 20.7% M 77.6% 20% H 78.4%" stroke="#8DA696" strokeWidth="1.5" opacity="0.45" />
-                  <path d="M 22% 81.3% V 82.7% M 21.6% 82% H 22.4%" stroke="#8DA696" strokeWidth="1.5" opacity="0.45" />
-                  <path d="M 78% 81.3% V 82.7% M 77.6% 82% H 78.4%" stroke="#8DA696" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="22%" y1="19.3%" x2="22%" y2="20.7%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="21.6%" y1="20%" x2="22.4%" y2="20%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="78%" y1="19.3%" x2="78%" y2="20.7%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="77.6%" y1="20%" x2="78.4%" y2="20%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="22%" y1="81.3%" x2="22%" y2="82.7%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="21.6%" y1="82%" x2="22.4%" y2="82%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="78%" y1="81.3%" x2="78%" y2="82.7%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
+                  <line x1="77.6%" y1="82%" x2="78.4%" y2="82%" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.45" />
 
-                  <line x1="5%" y1="90%" x2="28%" y2="65%" stroke="#8DA696" strokeWidth="1" opacity="0.16" />
-                  <line x1="95%" y1="90%" x2="72%" y2="65%" stroke="#8DA696" strokeWidth="1" opacity="0.16" />
-                  <line x1="12%" y1="12%" x2="32%" y2="32%" stroke="#8DA696" strokeWidth="1" strokeDasharray="4 4" opacity="0.14" />
-                  <line x1="88%" y1="12%" x2="68%" y2="32%" stroke="#8DA696" strokeWidth="1" strokeDasharray="4 4" opacity="0.14" />
+                  <line x1="5%" y1="90%" x2="28%" y2="65%" stroke="#1A1A1A" strokeWidth="1" opacity="0.16" />
+                  <line x1="95%" y1="90%" x2="72%" y2="65%" stroke="#1A1A1A" strokeWidth="1" opacity="0.16" />
+                  <line x1="12%" y1="12%" x2="32%" y2="32%" stroke="#1A1A1A" strokeWidth="1" strokeDasharray="4 4" opacity="0.14" />
+                  <line x1="88%" y1="12%" x2="68%" y2="32%" stroke="#1A1A1A" strokeWidth="1" strokeDasharray="4 4" opacity="0.14" />
                 </svg>
 
-                <Typography sx={{ position: 'absolute', top: '17.2%', left: '15.5%', fontFamily: 'monospace', fontSize: '0.68rem', color: '#8DA696', opacity: 0.6, letterSpacing: '0.12em' }}>
+                <Typography sx={{ position: 'absolute', top: '17.2%', left: '15.5%', fontFamily: 'monospace', fontSize: '0.68rem', color: '#1A1A1A', opacity: 0.7, letterSpacing: '0.12em' }}>
                   [ SYS_DATUM // SEC_04_END ]
                 </Typography>
-                <Typography sx={{ position: 'absolute', top: '17.2%', right: '15.5%', fontFamily: 'monospace', fontSize: '0.68rem', color: '#8DA696', opacity: 0.6, letterSpacing: '0.12em' }}>
+                <Typography sx={{ position: 'absolute', top: '17.2%', right: '15.5%', fontFamily: 'monospace', fontSize: '0.68rem', color: '#1A1A1A', opacity: 0.7, letterSpacing: '0.12em' }}>
                   [ ARCH_EBPF_VERIFIED ]
                 </Typography>
               </Box>
@@ -2858,7 +2864,7 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 style={{ position: 'absolute', top: '8%', right: '10%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="120" height="280" viewBox="0 0 120 300" fill="none" stroke="#8DA696" strokeWidth="1.5" opacity="0.38">
+                <svg width="120" height="280" viewBox="0 0 120 300" fill="none" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.38">
                   <rect x="10" y="10" width="100" height="280" rx="4" />
                   <line x1="10" y1="50" x2="110" y2="50" />
                   <line x1="10" y1="90" x2="110" y2="90" />
@@ -2876,14 +2882,14 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
                 style={{ position: 'absolute', bottom: '12%', left: '7%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="170" height="170" viewBox="0 0 200 200" fill="none" stroke="#8DA696" strokeWidth="1.5" opacity="0.35">
+                <svg width="170" height="170" viewBox="0 0 200 200" fill="none" stroke="#1A1A1A" strokeWidth="1.5" opacity="0.35">
                   <polygon points="100,20 180,70 150,160 50,160 20,70" />
                   <circle cx="100" cy="100" r="35" strokeDasharray="4 4" />
                   <circle cx="100" cy="100" r="18" />
                   <line x1="100" y1="20" x2="100" y2="65" />
                   <line x1="180" y1="70" x2="130" y2="88" />
                   <line x1="20" y1="70" x2="70" y2="88" />
-                  <circle cx="100" cy="100" r="6" fill="#8DA696" />
+                  <circle cx="100" cy="100" r="6" fill="#1A1A1A" />
                 </svg>
               </motion.div>
 
@@ -2892,10 +2898,10 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
                 style={{ position: 'absolute', top: '10%', left: '9%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="150" height="150" viewBox="0 0 160 160" fill="none" stroke="#8DA696" strokeWidth="1.2" opacity="0.32">
+                <svg width="150" height="150" viewBox="0 0 160 160" fill="none" stroke="#1A1A1A" strokeWidth="1.2" opacity="0.32">
                   <circle cx="80" cy="80" r="70" strokeDasharray="8 6" />
                   <circle cx="80" cy="80" r="48" />
-                  <path d="M 80 10 A 70 70 0 0 1 150 80 L 80 80 Z" fill="#8DA696" opacity="0.15" />
+                  <path d="M 80 10 A 70 70 0 0 1 150 80 L 80 80 Z" fill="#1A1A1A" opacity="0.15" />
                   <line x1="80" y1="0" x2="80" y2="160" strokeDasharray="2 4" />
                   <line x1="0" y1="80" x2="160" y2="80" strokeDasharray="2 4" />
                 </svg>
@@ -2906,7 +2912,7 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 style={{ position: 'absolute', top: '42%', left: '5%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="100" height="110" viewBox="0 0 100 110" fill="none" stroke="#8DA696" strokeWidth="1.3" opacity="0.3">
+                <svg width="100" height="110" viewBox="0 0 100 110" fill="none" stroke="#1A1A1A" strokeWidth="1.3" opacity="0.3">
                   <polygon points="50,5 95,28 95,80 50,105 5,80 5,28" />
                   <line x1="50" y1="5" x2="50" y2="55" />
                   <line x1="95" y1="28" x2="50" y2="55" />
@@ -2920,10 +2926,10 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
                 style={{ position: 'absolute', bottom: '10%', right: '8%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="140" height="160" viewBox="0 0 140 160" fill="none" stroke="#8DA696" strokeWidth="1.4" opacity="0.34">
+                <svg width="140" height="160" viewBox="0 0 140 160" fill="none" stroke="#1A1A1A" strokeWidth="1.4" opacity="0.34">
                   <path d="M 70 10 L 125 35 V 80 C 125 120 70 150 70 150 C 70 150 15 120 15 80 V 35 L 70 10 Z" />
                   <circle cx="70" cy="75" r="22" strokeDasharray="3 3" />
-                  <circle cx="70" cy="75" r="8" fill="#8DA696" />
+                  <circle cx="70" cy="75" r="8" fill="#1A1A1A" />
                   <line x1="70" y1="30" x2="70" y2="53" />
                   <line x1="70" y1="97" x2="70" y2="125" />
                 </svg>
@@ -2934,7 +2940,7 @@ const PrototypeFlowSection = () => {
                 transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
                 style={{ position: 'absolute', top: '5%', left: '46%', pointerEvents: 'none', zIndex: 2 }}
               >
-                <svg width="110" height="110" viewBox="0 0 100 100" fill="none" stroke="#8DA696" strokeWidth="1.2" opacity="0.25">
+                <svg width="110" height="110" viewBox="0 0 100 100" fill="none" stroke="#1A1A1A" strokeWidth="1.2" opacity="0.25">
                   <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" />
                   <polygon points="50,25 72,38 72,62 50,75 28,62 28,38" strokeDasharray="4 3" />
                 </svg>
@@ -2942,17 +2948,17 @@ const PrototypeFlowSection = () => {
 
               {/* Conclusion Text Centerpiece */}
               <Box sx={{ maxWidth: '860px', mx: 'auto', textAlign: 'center', px: 2, position: 'relative', zIndex: 20 }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', bgcolor: 'rgba(141,166,150,0.15)', px: 2.5, py: 0.5, borderRadius: '50px', mb: 3 }}>
-                  <Typography sx={{ fontFamily: 'monospace', fontSize: '0.78rem', color: '#8DA696', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700 }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', bgcolor: 'transparent', border: '1px solid rgba(26,26,26,0.3)', px: 2.5, py: 0.5, borderRadius: '50px', mb: 3 }}>
+                  <Typography sx={{ fontFamily: 'monospace', fontSize: '0.78rem', color: '#1A1A1A', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700 }}>
                     PROJECT CONCLUSION
                   </Typography>
                 </Box>
 
-                <Typography sx={{ fontFamily: fontSans, fontSize: { xs: '1.1rem', md: '1.35rem' }, color: '#D0DED4', opacity: 0.9, lineHeight: 1.6, fontWeight: 400, mb: 4, maxWidth: '720px', mx: 'auto' }}>
+                <Typography sx={{ fontFamily: fontSans, fontSize: { xs: '1.1rem', md: '1.35rem' }, color: '#1A1A1A', opacity: 0.85, lineHeight: 1.6, fontWeight: 400, mb: 4, maxWidth: '720px', mx: 'auto' }}>
                   This is the dawn of proactive intelligence. The architecture is robust, the prototype is live, and the future of autonomous cybersecurity is unfolding before us. We are no longer just monitoring threats; we are anticipating them.
                 </Typography>
 
-                <Typography sx={{ fontFamily: fontSans, fontWeight: 500, fontSize: { xs: '2.8rem', md: '4.8rem', lg: '5.5rem' }, color: '#D0DED4', letterSpacing: '-0.04em', lineHeight: 1.05 }}>
+                <Typography sx={{ fontFamily: fontSans, fontWeight: 500, fontSize: { xs: '2.8rem', md: '4.8rem', lg: '5.5rem' }, color: '#1A1A1A', letterSpacing: '-0.04em', lineHeight: 1.05 }}>
                   Made to detect, designed to endure.
                 </Typography>
               </Box>
@@ -2970,7 +2976,7 @@ const PrototypeFlowSection = () => {
                 width: activeIndex === stageIdx ? '28px' : '8px',
                 height: '8px',
                 borderRadius: '4px',
-                bgcolor: activeIndex === stageIdx ? '#D0DED4' : 'rgba(141,166,150,0.3)',
+                bgcolor: activeIndex === 3 ? (activeIndex === stageIdx ? '#1A1A1A' : 'rgba(26,26,26,0.35)') : (activeIndex === stageIdx ? '#D0DED4' : 'rgba(141,166,150,0.3)'),
                 cursor: 'pointer',
                 transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
