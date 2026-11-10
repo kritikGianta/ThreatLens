@@ -1,0 +1,15 @@
+.venv
+venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+tests
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.*
+data/app_settings.json
+data/real_log_collector_state.json
+docs
+*.md

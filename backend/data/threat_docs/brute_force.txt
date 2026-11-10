@@ -1,0 +1,76 @@
+Brute Force Attack — Threat Intelligence Reference
+====================================================
+
+MITRE ATT&CK: T1110, T1110.001, T1110.003, T1110.004
+Severity: HIGH to CRITICAL depending on stage and success
+
+Overview
+--------
+Brute force attacks attempt to gain unauthorized access by systematically trying passwords or 
+credential combinations. Modern variants include password spraying, credential stuffing, and 
+slow/distributed brute force to evade detection thresholds.
+
+Attack Variants
+---------------
+1. Classic Brute Force (T1110.001): Rapid repeated attempts against a single account.
+   - Indicator: >10 failed logins in under 60 seconds from the same IP.
+   - Tools: Hydra, Medusa, Ncrack, Burp Suite Intruder.
+
+2. Password Spraying (T1110.003): One common password tried against many accounts.
+   - Indicator: Failed logins spread across many usernames from a single IP.
+   - Evades lockout by staying under per-account thresholds.
+   - Commonly targets VPNs, OWA (Outlook Web Access), and Azure AD.
+
+3. Credential Stuffing (T1110.004): Automated replay of stolen username/password pairs.
+   - Source: Breach databases from dark web markets.
+   - Tools: Sentry MBA, OpenBullet, SNIPR.
+   - Indicator: Many failed attempts followed by successful logins from unusual geolocations.
+
+4. Slow / Distributed Brute Force (T1110 + T1583): Spread over days or weeks; 
+   rotates through proxy infrastructure to evade IP-based rate limits.
+   - Often executed by APT groups or ransomware pre-access brokers.
+   - Indicator: Low-frequency failures from many distinct IPs against the same accounts.
+
+Common Targets
+--------------
+- SSH (port 22), RDP (port 3389), FTP (port 21)
+- VPN gateways, OWA, Office 365 / Azure AD
+- Admin panels (WordPress /wp-admin, cPanel, Plesk)
+- Database services (MySQL port 3306, MSSQL port 1433)
+
+Detection Signals
+-----------------
+- Spike in Event ID 4625 (Windows failed logon) or /var/log/auth.log failures
+- Multiple failures followed by Event ID 4624 (success) — success after failures is high-fidelity
+- Geographically impossible logins (same user, different country within minutes)
+- Unusual login times for service accounts
+- High volume of 401/403 HTTP responses from authentication endpoints
+
+Response Actions
+----------------
+1. Immediately lock the targeted account if failures exceed threshold.
+2. Block the source IP on perimeter firewall and/or WAF.
+3. Investigate any successful login after a brute-force window — treat as compromise.
+4. Rotate credentials for affected accounts.
+5. Enable MFA on the targeted service.
+6. Review and tighten account lockout policy (threshold: 5 failures, duration: 15 min).
+7. Alert the account owner if it is a user account.
+
+SOAR Playbook
+-------------
+Trigger: >5 failed logins within 10 minutes from same IP
+Auto-actions: (1) Create CRITICAL incident, (2) Add IP to watch list,
+              (3) Notify SOC analyst, (4) If >20 failures: auto-block IP.
+
+Related IOC Types
+-----------------
+- IP addresses (source of attacks)
+- User accounts (targeted accounts)
+- User agents (automated tools leave distinctive UA strings)
+- Time patterns (attacks often during off-hours)
+
+CVE Relevance
+-------------
+- CVE-2019-11510: Pulse Secure VPN pre-auth file read enabling credential theft.
+- CVE-2020-5902: F5 BIG-IP TMUI RCE enabling bypass of authentication entirely.
+- CVE-2022-40684: Fortinet FortiOS/FortiProxy authentication bypass.
