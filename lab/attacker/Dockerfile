@@ -10,4 +10,5 @@ COPY attack.sh /usr/local/bin/attack
 RUN chmod 755 /usr/local/bin/attack
 
 ENTRYPOINT ["/usr/local/bin/attack"]
-CMD ["all"]
+# Idle by default: `compose up` must never start an attack. Run one with `compose run --rm attacker all`.
+CMD ["help"]

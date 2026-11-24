@@ -91,8 +91,14 @@ banner() {
   dim "Real tools, real logs. Only the isolated lab network is attacked."
 }
 
-case "${1:-all}" in
-  all)        banner; recon; web; bruteforce; post; exfil; echo; green "Attack complete. Open Campaigns in ThreatLens to see the kill chain." ;;
+# No argument = idle. `docker compose --profile lab up` starts this container too, and it must not
+# attack on its own — the attack runs only when the presenter asks for it.
+case "${1:-help}" in
+  help|-h|--help)
+    echo "ThreatLens attacker is idle. Launch an attack with:"
+    echo "  docker compose --profile lab run --rm attacker all    # or: recon | web | bruteforce | post | exfil"
+    exit 0 ;;
+  all)       banner; recon; web; bruteforce; post; exfil; echo; green "Attack complete. Open Campaigns in ThreatLens to see the kill chain." ;;
   recon)      recon ;;
   web)        web ;;
   bruteforce) bruteforce ;;
