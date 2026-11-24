@@ -158,15 +158,15 @@ def _ensure_unique(db: Session, email: str, username: str) -> None:
 @router.get("/config")
 def auth_config(db: Session = Depends(get_db)):
     """Tells the UI whether self-service signup is available."""
-    has_users = db.query(User.id).first() is not None
-    return {"signup_enabled": settings.ALLOW_PUBLIC_SIGNUP or not has_users, "bootstrap_required": not has_users}
+    has_admin = db.query(User.id).filter(User.role == "admin").first() is not None
+    return {"signup_enabled": settings.ALLOW_PUBLIC_SIGNUP or not has_admin, "bootstrap_required": not has_admin}
 
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
 def signup(request: Request, data: SignupRequest, db: Session = Depends(get_db)):
-    """Register a new account. The very first account becomes an admin."""
-    is_first_user = db.query(User.id).first() is None
+    """Register a new account. The first account (while no admin exists) becomes an admin."""
+    is_first_user = db.query(User.id).filter(User.role == "admin").first() is None
     if not settings.ALLOW_PUBLIC_SIGNUP and not is_first_user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Self-service signup is disabled. Ask an administrator for an account.")
 
@@ -177,7 +177,7 @@ def signup(request: Request, data: SignupRequest, db: Session = Depends(get_db))
     record_audit(db, "auth.signup", actor=user, target_type="user", target_id=user.id, request=request, commit=True)
 
     response = _token_response(user)
-    response["message"] = f"Account created. Role: {role}" + (" (first user is automatically admin)" if is_first_user else "")
+    response["message"] = f"Account created. Role: {role}" + (" (first account is automatically admin)" if is_first_user else "")
     return response
 
 

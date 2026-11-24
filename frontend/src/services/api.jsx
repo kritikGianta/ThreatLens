@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Same-origin by default: nginx (docker) and the CRA dev-server proxy both forward /api → backend.
 // Override with REACT_APP_API_BASE_URL (e.g. https://api.example.com/api/v1) for split deployments.
-const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || '/api/v1').replace(/\/$/, '');
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || '/api/v1').replace(/\/$/, '');
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1$/, '');
 
 // Long-running operations get a generous timeout; everything else fails fast.

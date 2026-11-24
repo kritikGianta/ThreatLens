@@ -9,12 +9,15 @@ demo seeder):
 from __future__ import annotations
 
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Dict, Optional
 
 from sqlalchemy.orm import Session
 
+from core import telemetry
+from core.events import queue_event
 from models.db_models import Blocklist, LogEntry
 from services.alert_service import evaluate_alert_rules
 from services.cve_service import search_cves
@@ -81,6 +84,7 @@ def process_log(
     (this function only flushes). `enrich=True` adds MITRE/CVE/IP intel, RAG context
     and a SOC summary — used for interactive analysis.
     """
+    started = time.perf_counter()
     parsed = parse_log(raw_log)
     source_ip = parsed.get("source_ip")
 
@@ -158,11 +162,43 @@ def process_log(
             asset_id=asset_id,
             summary_extra=extra,
         )
-        if incident is not None and created:
+        if incident is not None and (created or getattr(incident, "_escalated", False)):
             soar_actions = evaluate_alert_rules(db, incident)
             record_source_health(db, source, event_timestamp=log_entry.timestamp, incidents_created=1)
 
+    duration_ms = (time.perf_counter() - started) * 1000
+    if not enrich:  # interactive enrichment waits on third-party APIs; measure the core pipeline only
+        telemetry.record_processed(duration_ms)
+
+    queue_event(db, "log", {
+        "id": log_entry.id,
+        "timestamp": log_entry.timestamp.isoformat(),
+        "source": source,
+        "source_ip": source_ip,
+        "log_type": parsed.get("log_type"),
+        "threat": detection.get("threat_detected"),
+        "risk_level": risk["risk_level"] if detection.get("threat_detected") else None,
+        "excerpt": raw_log[:160],
+    })
+    if incident is not None:
+        queue_event(db, "incident", {
+            "id": incident.id,
+            "created": created,
+            "reopened": reopened,
+            "threat_type": incident.threat_type,
+            "risk_level": incident.risk_level,
+            "risk_score": incident.risk_score,
+            "source_ip": incident.source_ip,
+            "mitre_technique": incident.mitre_technique,
+            "status": incident.status,
+            "alert_count": incident.alert_count or 1,
+            "campaign_id": incident.campaign_id,
+            "multi_stage": detection.get("multi_stage_correlation"),
+            "source": source,
+        })
+
     return {
+        "processing_ms": round(duration_ms, 1),
         "log_id": log_entry.id,
         "incident_id": incident.id if incident is not None else None,
         "parsed_log": parsed,

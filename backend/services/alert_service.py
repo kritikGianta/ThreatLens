@@ -14,6 +14,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from models.db_models import AlertRule, Blocklist, Incident
 from config import settings
+from core.events import queue_event
 from core.http import http_client
 
 CONDITION_TYPES = ("risk_level", "risk_level_min", "threat_type", "multi_stage")
@@ -24,8 +25,11 @@ logger = logging.getLogger("threatlens.alerts")
 
 def evaluate_alert_rules(db: Session, incident: Incident):
     rules = db.query(AlertRule).filter(AlertRule.enabled.is_(True)).all()
+    already_fired = {a.get("rule") for a in (incident.soc_summary or {}).get("soar_actions") or []}
     triggered = []
     for rule in rules:
+        if rule.name in already_fired:
+            continue
         should_fire = False
         if rule.condition_type == "risk_level":
             should_fire = incident.risk_level == rule.condition_value
@@ -43,7 +47,14 @@ def evaluate_alert_rules(db: Session, incident: Incident):
             rule.last_triggered = datetime.utcnow()
             triggered.append({"rule": rule.name, "action": rule.action_type, "status": "success", "detail": detail})
     if triggered:
+        summary = dict(incident.soc_summary or {})
+        summary["soar_actions"] = (summary.get("soar_actions") or []) + triggered
+        incident.soc_summary = summary
+        incident.tags = sorted(set((incident.tags or []) + [f"soar:{t['action']}" for t in triggered]))
         db.flush()
+        for action in triggered:
+            queue_event(db, "soar", {"incident_id": incident.id, "threat_type": incident.threat_type,
+                                     "source_ip": incident.source_ip, **action})
         logger.info(f"[Alerts] Triggered for incident #{incident.id}: {[t['rule'] for t in triggered]}")
     return triggered
 

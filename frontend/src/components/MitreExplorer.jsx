@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getApiErrorMessage, getMitreTechnique, searchMitre } from '../services/api';
+import AttackMatrix from './AttackMatrix';
 
 const TECHNIQUE_ID = /^T\d{4}(\.\d{3})?$/i;
 
@@ -25,6 +26,7 @@ export default function MitreExplorer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState([]);
+  const [view, setView] = useState('matrix');
   const [recent, setRecent] = useState([]);
   const [copied, setCopied] = useState(false);
   const [matches, setMatches] = useState([]);
@@ -53,7 +55,7 @@ export default function MitreExplorer() {
 
   useEffect(() => {
     const id = searchParams.get('id');
-    if (id) { setQuery(id); search(id); }
+    if (id) { setView('explore'); setQuery(id); search(id); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -83,7 +85,12 @@ export default function MitreExplorer() {
       </div>
 
       <div className="page-body">
-        <div className="mitre-layout">
+        <div className="filter-tabs">
+          <button className={`filter-tab ${view === 'matrix' ? 'ft-active' : ''}`} onClick={() => setView('matrix')}>🗺️ Coverage heatmap</button>
+          <button className={`filter-tab ${view === 'explore' ? 'ft-active' : ''}`} onClick={() => setView('explore')}>🔍 Technique explorer</button>
+        </div>
+        {view === 'matrix' && <AttackMatrix onSelect={(id) => { setView('explore'); setQuery(id); search(id); }} />}
+        <div className="mitre-layout" style={{ display: view === 'matrix' ? 'none' : undefined }}>
           {/* Left panel */}
           <div className="mitre-left">
             {/* Search */}

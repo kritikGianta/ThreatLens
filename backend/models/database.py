@@ -72,6 +72,10 @@ else:
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 Base = declarative_base()
 
+from core.events import install_session_hooks  # noqa: E402  (after SessionLocal exists)
+
+install_session_hooks(SessionLocal)
+
 
 _MIGRATION_LOCK_ID = 727274  # arbitrary constant for pg_advisory_lock
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 import ipaddress
 import re
 from typing import Dict, Optional
+from urllib.parse import unquote_plus
 
 from core.llm import LLMUnavailable, chat_completion, extract_json, llm_enabled
 from config import settings
@@ -116,7 +117,8 @@ LOG_TYPE_PATTERNS = [
     (re.compile(r"CloudTrail|userIdentity|eventSource\"?\s*:\s*\"?[a-z0-9.-]+\.amazonaws\.com", re.I), "aws_cloudtrail"),
     (re.compile(r"\bAzure(?:AD)?\b|SignInLogs|AuditLogs|microsoft\.aad", re.I), "azure"),
     (re.compile(r"\bgcloud\b|projects/[^/\s]+/logs|google\.cloud", re.I), "gcp"),
-    (re.compile(r"\b(?:GET|POST|PUT|DELETE|HEAD|PATCH) /|HTTP/\d\.\d|\bnginx\b|\bapache\b|\bsquid\b", re.I), "web_server"),
+    (re.compile(r"\bsquid\b|proxy-server|\bTCP_(?:TUNNEL|MISS|HIT)\b", re.I), "proxy"),
+    (re.compile(r"\b(?:GET|POST|PUT|DELETE|HEAD|PATCH) /|HTTP/\d\.\d|\bnginx\b|\bapache\b", re.I), "web_server"),
     (re.compile(r"query\[|NXDOMAIN|\bdns\b|named\[|dnsmasq", re.I), "dns"),
     (re.compile(r"^<\d+>|\bsyslog\b|rsyslog", re.I), "syslog"),
 ]
@@ -207,6 +209,11 @@ def parse_log(raw_log: str) -> Dict:
         "parser": "regex",
         "raw": raw_log,
     }
+    # URL-decoded view of web logs so payloads like %27%20OR%20... are matched by detection rules.
+    if "%" in raw_log or "+" in raw_log:
+        decoded = unquote_plus(raw_log)
+        if decoded != raw_log:
+            parsed["raw_decoded"] = decoded
 
     # Unstructured format — let the LLM fill the gaps (never overrides regex results).
     if not parsed["source_ip"] and not parsed["event_id"]:

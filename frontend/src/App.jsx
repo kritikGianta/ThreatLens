@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { LiveEventsProvider } from './contexts/LiveEventsContext';
 import PrivateRoute from './components/PrivateRoute';
 import AppShell from './components/AppShell';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -25,8 +26,12 @@ import MitreExplorer from './components/MitreExplorer';
 import Settings from './components/Settings';
 import Reports from './components/Reports';
 import Assets from './components/Assets';
+import ThreatMap from './components/ThreatMap';
+import Executive from './components/Executive';
+import DemoControl from './components/DemoControl';
 
 import './styles/globals.css';
+import './styles/live.css';
 
 const AppLayout = ({ children }) => (
   <ThemeProvider>
@@ -39,6 +44,7 @@ const AppLayout = ({ children }) => (
 function App() {
   return (
     <AuthProvider>
+      <LiveEventsProvider>
       <Router>
         <Routes>
           {/* Public */}
@@ -60,10 +66,14 @@ function App() {
           <Route path="/reports"    element={<AppLayout><Reports /></AppLayout>} />
           <Route path="/assets"     element={<AppLayout><Assets /></AppLayout>} />
           <Route path="/settings"   element={<AppLayout><Settings /></AppLayout>} />
+          <Route path="/threat-map" element={<AppLayout><ThreatMap /></AppLayout>} />
+          <Route path="/executive"  element={<AppLayout><Executive /></AppLayout>} />
+          <Route path="/demo"       element={<AppLayout><DemoControl /></AppLayout>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      </LiveEventsProvider>
     </AuthProvider>
   );
 }

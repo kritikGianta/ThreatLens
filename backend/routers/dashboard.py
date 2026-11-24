@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import Session
 
+from core import telemetry
 from dependencies.auth import require_admin, require_writer
 from models.database import get_db
 from models.db_models import (
@@ -220,6 +221,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         "log_sources": log_sources,
         "activity_24h": activity_24h,
         "activity_7d": activity_7d,
+        "performance": telemetry.snapshot(15),
         "generated_at": now.isoformat(),
     }
 
@@ -500,6 +502,7 @@ def get_attack_timeline(ip_address: str, limit: int = Query(500, ge=1, le=2000),
             "campaign_id": c.id, "campaign_name": c.name, "risk_level": c.risk_level,
             "stages_progression": list(dict.fromkeys(stage.get("stage") for stage in (c.stages_progression or []))),
             "duration_hours": round(abs((c.last_seen - c.first_seen).total_seconds()) / 3600, 1) if c.last_seen and c.first_seen else 0,
+            "duration_seconds": int(abs((c.last_seen - c.first_seen).total_seconds())) if c.last_seen and c.first_seen else 0,
         }
     return {"ip_address": ip_address, "total_events": len(timeline), "campaign": campaign_info, "timeline": timeline}
 
@@ -515,6 +518,7 @@ def _serialize_campaign(c: AttackCampaign) -> Dict[str, Any]:
         "event_count": len(c.stages_progression or []),
         "first_seen": _iso(c.first_seen), "last_seen": _iso(c.last_seen),
         "duration_hours": round(abs((c.last_seen - c.first_seen).total_seconds()) / 3600, 1) if c.last_seen and c.first_seen else 0,
+        "duration_seconds": int(abs((c.last_seen - c.first_seen).total_seconds())) if c.last_seen and c.first_seen else 0,
     }
 
 
@@ -646,3 +650,132 @@ def list_audit_logs(
     total = query.count()
     rows = query.order_by(desc(AuditLog.timestamp), desc(AuditLog.id)).offset(offset).limit(limit).all()
     return {"total": total, "entries": [serialize_audit(r) for r in rows]}
+
+
+# ========================
+#  Live threat map
+# ========================
+@router.get("/threat-map")
+def threat_map(hours: int = Query(24, ge=1, le=720), limit: int = Query(150, ge=1, le=500), db: Session = Depends(get_db)):
+    """External attackers seen in the window, geolocated, with the HQ they targeted."""
+    from services.ip_intel_service import geolocate_many, get_hq_location, is_public_ip
+
+    since = datetime.utcnow() - timedelta(hours=hours)
+    rank = {"LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
+    rows = (
+        db.query(Incident.source_ip, Incident.risk_level, Incident.threat_type, Incident.last_seen, Incident.alert_count, Incident.id)
+        .filter(Incident.source_ip.isnot(None), Incident.last_seen >= since)
+        .order_by(desc(Incident.last_seen))
+        .limit(3000)
+        .all()
+    )
+    attackers: Dict[str, Dict[str, Any]] = {}
+    for ip, level, threat, last_seen, alerts, incident_id in rows:
+        if not is_public_ip(ip):
+            continue
+        entry = attackers.setdefault(ip, {"ip": ip, "risk_level": level, "threats": [], "alerts": 0, "incidents": 0,
+                                          "last_seen": _iso(last_seen), "latest_incident_id": incident_id})
+        entry["alerts"] += alerts or 1
+        entry["incidents"] += 1
+        if rank.get(level, 0) > rank.get(entry["risk_level"], 0):
+            entry["risk_level"] = level
+        if threat and threat not in entry["threats"]:
+            entry["threats"].append(threat)
+    ordered = list(attackers.values())[:limit]
+    geo = geolocate_many([a["ip"] for a in ordered])
+    blocked = {b[0] for b in db.query(Blocklist.ip_address).filter(Blocklist.ip_address.in_([a["ip"] for a in ordered])).all()} if ordered else set()
+    points = []
+    for attacker in ordered:
+        location = geo.get(attacker["ip"])
+        if not location or location.get("lat") is None:
+            continue
+        points.append({**attacker, "threats": attacker["threats"][:4], "blocked": attacker["ip"] in blocked,
+                       "lat": location["lat"], "lon": location["lon"], "city": location.get("city"),
+                       "country": location.get("country"), "country_code": location.get("country_code"),
+                       "isp": location.get("isp")})
+    countries: Dict[str, int] = {}
+    for point in points:
+        countries[point["country"]] = countries.get(point["country"], 0) + point["alerts"]
+    return {
+        "hq": get_hq_location(),
+        "points": points,
+        "unlocated": len(ordered) - len(points),
+        "top_countries": sorted(({"country": c, "alerts": n} for c, n in countries.items()), key=lambda x: -x["alerts"])[:8],
+        "window_hours": hours,
+    }
+
+
+# ========================
+#  Executive metrics
+# ========================
+@router.get("/executive")
+def executive_metrics(hours: int = Query(168, ge=1, le=2160), db: Session = Depends(get_db)):
+    """Board-level KPIs computed from real case data and measured pipeline performance."""
+
+
+    now = datetime.utcnow()
+    since = now - timedelta(hours=hours)
+    incidents = db.query(Incident).filter(Incident.last_seen >= since).all()
+    total = len(incidents)
+    alerts = sum(i.alert_count or 1 for i in incidents)
+
+    resolved = [i for i in incidents if i.resolved_at and i.opened_at]
+    mttr_minutes = (
+        round(sum((i.resolved_at - i.opened_at).total_seconds() for i in resolved) / len(resolved) / 60, 1) if resolved else None
+    )
+    triage_deltas = []
+    for incident in incidents:
+        for entry in incident.status_history or []:
+            if entry.get("owner") not in (None, "system") and incident.opened_at:
+                try:
+                    stamp = datetime.fromisoformat(entry["timestamp"])
+                except (KeyError, ValueError):
+                    continue
+                triage_deltas.append(max((stamp - incident.opened_at).total_seconds(), 0))
+                break
+    mtta_minutes = round(sum(triage_deltas) / len(triage_deltas) / 60, 1) if triage_deltas else None
+
+    with_sla = [i for i in incidents if i.sla_due_at]
+    met = [i for i in with_sla if (i.resolved_at and i.resolved_at <= i.sla_due_at) or (not i.resolved_at and now <= i.sla_due_at)]
+    automated = [i for i in incidents if any(str(t).startswith("soar:") for t in (i.tags or []))]
+
+    severity = {lvl: 0 for lvl in ("CRITICAL", "HIGH", "MEDIUM", "LOW")}
+    for incident in incidents:
+        severity[incident.risk_level if incident.risk_level in severity else "LOW"] += 1
+
+    daily: Dict[str, Dict[str, int]] = {}
+    for incident in incidents:
+        if incident.last_seen:
+            key = incident.last_seen.date().isoformat()
+            daily.setdefault(key, {"incidents": 0, "critical": 0})
+            daily[key]["incidents"] += 1
+            daily[key]["critical"] += 1 if incident.risk_level == "CRITICAL" else 0
+    days = max(1, min(hours // 24, 30))
+    trend = [{"day": (now.date() - timedelta(days=o)).isoformat(), **daily.get((now.date() - timedelta(days=o)).isoformat(), {"incidents": 0, "critical": 0})}
+             for o in range(days - 1, -1, -1)]
+
+    techniques: Dict[str, int] = {}
+    for incident in incidents:
+        if incident.mitre_technique:
+            techniques[incident.mitre_technique] = techniques.get(incident.mitre_technique, 0) + 1
+
+    return {
+        "window_hours": hours,
+        "incidents": total,
+        "alerts": alerts,
+        "noise_reduction_pct": round(100 * (1 - total / alerts), 1) if alerts else 0.0,
+        "open_cases": sum(1 for i in incidents if i.status in ACTIVE_STATUSES),
+        "critical_open": sum(1 for i in incidents if i.status in ACTIVE_STATUSES and i.risk_level == "CRITICAL"),
+        "mtta_minutes": mtta_minutes,
+        "mttr_minutes": mttr_minutes,
+        "resolved_cases": len(resolved),
+        "sla_compliance_pct": round(100 * len(met) / len(with_sla), 1) if with_sla else None,
+        "automation_rate_pct": round(100 * len(automated) / total, 1) if total else 0.0,
+        "auto_blocked_ips": db.query(func.count(Blocklist.id)).filter(Blocklist.auto_blocked.is_(True)).scalar() or 0,
+        "active_campaigns": db.query(func.count(AttackCampaign.id)).filter(AttackCampaign.status == "Active").scalar() or 0,
+        "logs_ingested": db.query(func.count(LogEntry.id)).filter(LogEntry.timestamp >= since).scalar() or 0,
+        "severity": severity,
+        "trend": trend,
+        "top_techniques": sorted(({"technique": t, "count": c} for t, c in techniques.items()), key=lambda x: -x["count"])[:8],
+        "performance": telemetry.snapshot(30),
+    }

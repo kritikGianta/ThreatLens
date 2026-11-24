@@ -284,7 +284,7 @@ export default function About() {
     {
       num: '( 1 )',
       title: 'Intelligence over rules',
-      desc: 'Rules catch what you know. Intelligence catches what you don\'t. ThreatLens combines both — 11 parallel detection engines AND live neural threat feeds from CISA, Feodo Tracker, and URLhaus.',
+      desc: 'Rules catch what you know. Intelligence catches what you don\'t. ThreatLens combines both — 28 MITRE-mapped detection rules plus live threat-intelligence feeds from CISA, abuse.ch and IPsum, checked against every log.',
       side: 'left'
     },
     {
@@ -302,17 +302,17 @@ export default function About() {
     {
       num: '( 4 )',
       title: 'Automation without blindness',
-      desc: 'SOAR automation is powerful but dangerous if unchecked. Every automated action — IP blocks, pod isolation, firewall rules — is logged, traceable, and reversible via our core API.',
+      desc: 'SOAR automation is powerful but dangerous if unchecked. Every automated action — case escalations, IP blocks, webhook and e-mail alerts — is recorded on the case and in an immutable audit log, and blocks can be reversed in one click.',
       side: 'right'
     }
   ];
 
   const useCases = [
-    { q: 'Alert Flood? We filter 99.4% of false positives.', a: 'Our neural classification layer processes raw events at kernel speed, dropping noise before it ever enters analyst triage queues.' },
-    { q: 'Lateral Movement? Kernel eBPF isolates pods in < 12ms.', a: 'Automated micro-segmentation instantly severes compromised node connections without halting production cluster services.' },
-    { q: 'Zero-Day Exploit? Swarm heuristics correlate on the fly.', a: 'Multi-agent AI swarms synthesize graph anomalies across your entire network topology to catch previously unknown attack vectors.' },
-    { q: 'Custom Log Format? Zero-copy parser adapts instantly.', a: 'No schema rewrites or indexing downtime required. Ingest syslog, JSON, AWS CloudTrail, and custom application logs natively.' },
-    { q: 'Compliance Audit? Complete API audit logs ready 24/7.', a: 'Export SOC-2, HIPAA, and ISO-compliant investigation timelines and automated incident reports with a single API call.' }
+    { q: 'Alert flood? Repeat alerts become one case.', a: 'Alerts with the same source, technique and threat are grouped into a single case with an alert counter, so analysts triage stories instead of duplicates. The Executive View shows the measured noise reduction.' },
+    { q: 'Lateral movement? Linked to the same campaign.', a: 'PsExec, WMI and WinRM activity is detected and attached to the attacker\'s campaign, so the kill chain shows exactly how they moved from first access to the domain controller.' },
+    { q: 'Low-and-slow attack? The correlation engine finds it.', a: 'A sweep every five minutes catches brute force spread over many hours and password spraying from many IPs against one account — attacks no single log reveals.' },
+    { q: 'Unusual log format? There is a fallback.', a: 'Thirteen formats are recognised out of the box, from Windows Event Log to AWS CloudTrail; with a Groq key, an LLM parser extracts fields from formats no pattern recognises.' },
+    { q: 'Audit questions? Every action is logged.', a: 'Logins, case changes, SOAR rules, blocklist edits and settings changes are recorded with who, what, when and from where, and incident reports export as Markdown.' }
   ];
 
   return (
@@ -329,7 +329,7 @@ export default function About() {
         {/* Left: Underlined Stacked Title */}
         <Box sx={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onClick={() => navigate('/')}>
           <Typography sx={{ fontWeight: 800, fontSize: { xs: '0.95rem', md: '1.1rem' }, lineHeight: 1.1, letterSpacing: '-0.03em', borderBottom: '2px solid #fff', pb: 0.2 }}>
-            ThreatLens®
+            ThreatLens
           </Typography>
           <Typography sx={{ fontWeight: 800, fontSize: { xs: '0.95rem', md: '1.1rem' }, lineHeight: 1.1, letterSpacing: '-0.03em', borderBottom: '2px solid #fff', pb: 0.2, mt: 0.3 }}>
             Cybersecurity
@@ -341,7 +341,7 @@ export default function About() {
 
         {/* Center: Tilted White Block Logo Replica */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, transform: 'rotate(-12deg)', bgcolor: '#FFFFFF', color: '#111111', px: 2.5, py: 1, fontWeight: 900, fontSize: '1.35rem', letterSpacing: '-0.05em', lineHeight: 0.9, textAlign: 'center', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-          THREAT<br />LENS®
+          THREAT<br />LENS
         </Box>
 
         {/* Right Navigation */}
@@ -400,7 +400,7 @@ export default function About() {
                 <LazyVideo eager src="/assets/videos/about-hero.mp4" label="ThreatLens product overview" />
               </Box>
               <Typography sx={{ fontWeight: 400, fontSize: { xs: '1rem', md: '1.1rem' }, lineHeight: 1.65, maxWidth: '520px', color: 'rgba(255,255,255,0.85)' }}>
-                ThreatLens® is an autonomous cyber intelligence platform built for the fast, asymmetric world of adversarial defense. For over a decade of research and operational engineering, we’ve been trusted to trace and neutralize the threats behind enterprise infrastructure across North America and globally.
+                ThreatLens is an autonomous cyber intelligence platform built for the fast, asymmetric world of adversarial defense. It reads raw logs from servers, firewalls and cloud platforms, links every step of an intrusion into one campaign, scores the risk transparently and responds automatically — with an AI copilot for the questions that follow.
               </Typography>
             </motion.div>
           </Grid>
@@ -496,7 +496,7 @@ export default function About() {
               <Grid container spacing={4}>
                 <Grid item xs={12} sm={6}>
                   <Typography sx={{ fontSize: '1rem', lineHeight: 1.65, color: 'rgba(255,255,255,0.85)' }}>
-                    We don't just deliver automated risk alerts. We make sure every threat sequence arrives with verified kernel context, eliminating false positives and manual cross-referencing.
+                    We don't just deliver automated risk alerts. We make sure every threat arrives with its evidence, MITRE ATT&CK mapping, threat-intelligence context and a risk score that explains itself — instead of a bare alert to cross-reference by hand.
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -536,7 +536,7 @@ export default function About() {
                 THREATS
               </Typography>
               <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', lineHeight: 1.5, textAlign: 'right', display: { xs: 'none', md: 'block' } }}>
-                ESTD. 2026<br />QC (CANADA)<br />©THREATLENS
+                28 RULES<br />15 ATTACK CHAINS<br />706 TECHNIQUES
               </Typography>
             </Box>
 
@@ -714,17 +714,17 @@ export default function About() {
             {/* Left Col */}
             <Grid item xs={12} md={4}>
               <Typography sx={{ fontWeight: 600, fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '340px' }}>
-                We engineer core telemetry, we run 24/7 continuous analysis, and our neural engines are always active.
+                A real-time pipeline, a background correlation engine every five minutes and hourly threat-intel refreshes keep the platform watching around the clock.
               </Typography>
             </Grid>
 
             {/* Right Horizontal Rows */}
             <Grid item xs={12} md={8}>
               {[
-                { stat: '11', desc: 'Parallel Detection Engines simultaneously active' },
-                { stat: '12+', desc: 'Log Formats Parsed without schema transformations' },
+                { stat: '28', desc: 'MITRE-mapped detection rules — every match fires' },
+                { stat: '13', desc: 'Log formats recognised, from Windows to AWS CloudTrail' },
                 { stat: '100%', desc: 'Of risk scores include complete transparent explanation' },
-                { stat: '24/7', desc: 'Real-time eBPF kernel telemetry & AI incident triage' }
+                { stat: '<20 ms', desc: 'Median processing time per event (measured live)' }
               ].map((row, idx) => (
                 <Box
                   key={idx}
@@ -843,7 +843,7 @@ export default function About() {
       <Container maxWidth="xl">
         <Box sx={{ pt: 6, borderTop: '1px solid rgba(255,255,255,0.15)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
           <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-            ThreatLens® Entertainment & Enterprise Cybersecurity Logistics
+            ThreatLens · AI-assisted security operations
           </Typography>
           <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
             2026 © ALL RIGHTS RESERVED

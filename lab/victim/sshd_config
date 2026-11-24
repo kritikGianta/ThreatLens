@@ -1,0 +1,13 @@
+Port 22
+PasswordAuthentication yes
+KbdInteractiveAuthentication no
+PermitRootLogin no
+UsePAM yes
+MaxAuthTries 6
+MaxStartups 30:50:60
+LogLevel VERBOSE
+# Every command run over SSH is recorded (like auditd / EDR command-line telemetry).
+ForceCommand /usr/local/bin/audit-shell
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp internal-sftp

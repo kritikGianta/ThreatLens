@@ -62,3 +62,46 @@ def coverage(db: Session = Depends(get_db)):
             "id": tid, "name": tech["name"] if tech else tid, "tactics": tech.get("tactics", []) if tech else [], "incidents": count,
         })
     return {"observed": sorted(observed, key=lambda t: -t["incidents"])}
+
+
+@router.get("/matrix")
+def coverage_matrix(db: Session = Depends(get_db)):
+    """ATT&CK heatmap: techniques the rule set can detect, grouped by tactic, with observed incident counts."""
+    from services.detector import DETECTION_RULES
+    from services.mitre_service import list_tactics
+
+    detectable: dict = {}
+    for rule in DETECTION_RULES:
+        detectable.setdefault(rule["mitre"], []).append(rule["name"])
+    detectable.setdefault("T1110.004", []).append("Distributed Brute Force (correlation engine)")
+    detectable.setdefault("T1110", []).append("Slow Brute Force (correlation engine)")
+
+    observed = dict(
+        db.query(Incident.mitre_technique, func.count(Incident.id))
+        .filter(Incident.mitre_technique.isnot(None))
+        .group_by(Incident.mitre_technique)
+        .all()
+    )
+    technique_ids = set(detectable) | set(observed)
+    columns: dict = {}
+    for tid in sorted(technique_ids):
+        tech = get_technique_by_id(tid)
+        tactics = (tech or {}).get("tactics") or ["Unmapped"]
+        for tactic in tactics:
+            columns.setdefault(tactic, []).append({
+                "id": tid,
+                "name": tech["name"] if tech else tid,
+                "detectable": tid in detectable,
+                "rules": detectable.get(tid, []),
+                "observed": observed.get(tid, 0),
+            })
+    order = [t["name"] for t in list_tactics()]
+    matrix = [{"tactic": tactic, "techniques": columns[tactic]} for tactic in order if tactic in columns]
+    matrix += [{"tactic": tactic, "techniques": techs} for tactic, techs in columns.items() if tactic not in order]
+    return {
+        "matrix": matrix,
+        "detectable_techniques": len(detectable),
+        "observed_techniques": len([t for t in observed if observed[t]]),
+        "tactics_covered": len(matrix),
+        "rules": len(DETECTION_RULES),
+    }

@@ -54,5 +54,45 @@ services:
     ports:
       - "${FRONTEND_PORT:-8080}:80"
 
+  # ── Attack lab (opt-in): docker compose --profile lab up -d --build ─────────
+  # A deliberately weak server, a log shipper, and an attacker toolkit on an isolated network.
+  victim:
+    profiles: ["lab"]
+    build: ./lab/victim
+    image: threatlens/lab-victim:4.0.0
+    hostname: victim
+    restart: unless-stopped
+    networks: [lab]
+    volumes:
+      - lablogs:/var/log/lab
+
+  shipper:
+    profiles: ["lab"]
+    build: ./lab/shipper
+    image: threatlens/lab-shipper:4.0.0
+    restart: unless-stopped
+    environment:
+      THREATLENS_URL: http://backend:8000/api/v1/logs/webhook
+      INGEST_API_KEY: ${INGEST_API_KEY:-}
+    volumes:
+      - lablogs:/var/log/lab
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  attacker:
+    profiles: ["lab"]
+    build: ./lab/attacker
+    image: threatlens/lab-attacker:4.0.0
+    networks: [lab]
+    depends_on: [victim]
+    environment:
+      TARGET: victim
+
+networks:
+  lab:
+    internal: false   # attacker needs no internet, but apk/pip run at build time only
+
 volumes:
   pgdata:
+  lablogs:

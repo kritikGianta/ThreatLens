@@ -7,17 +7,15 @@
 
 ## Architecture Overview
 
-![ThreatLens Architecture](docs/architecture_diagram.png)
-
 ```mermaid
 graph TB
     subgraph Ingestion
         A[Raw Log] --> B[Parser<br/>Regex + LLM Fallback]
-        B --> C[12+ Log Format Detection]
+        B --> C[13 Log Formats]
     end
 
     subgraph Detection
-        C --> D[16 Detection Rules<br/>Multi-Rule Fire]
+        C --> D[28 Detection Rules<br/>Multi-Rule Fire]
         D --> E[IP State Tracker]
         E --> F[Campaign Engine<br/>No Timeout]
         D --> G[Blocklist Check]
@@ -33,7 +31,7 @@ graph TB
     end
 
     subgraph Scoring
-        F --> N[Risk Engine<br/>8 Factors]
+        F --> N[Risk Engine<br/>10 Factors]
         G --> N
         H --> N
         L --> N
@@ -77,11 +75,11 @@ graph TB
 
 ## Module 2: Multi-Rule Detection Engine
 
-### Feature 3: 16-Rule Detection with Multi-Fire
+### Feature 3: 28-Rule Detection with Multi-Fire
 | | |
 |---|---|
 | **File** | `services/detector.py` (lines 146-251) |
-| **What it does** | Runs every incoming log against 16 detection rules covering the full MITRE ATT&CK kill chain. **All** matching rules fire — not just the first match. |
+| **What it does** | Runs every incoming log against 28 detection rules covering the full MITRE ATT&CK kill chain. **All** matching rules fire — not just the first match. |
 | **Rules** | Successful Login After Brute Force, Brute Force Attack, Suspicious (encoded/obfuscated) PowerShell, Credential Dumping (Mimikatz/LSASS/procdump), Event Log Cleared, Lateral Movement (PsExec/WMI/WinRM), Data Exfiltration (tool + verb, or ≥100 MB to an external host), Persistence (schtasks/crontab/run keys/services), Reconnaissance (nmap/masscan), Privilege Escalation, C2 Communication, SQL Injection, Web Path Traversal / Sensitive File Probe, Web Shell Upload, Suspicious Inbound Scanning, Blocked Connection From External Host. Keyword rules use word-boundary regexes to avoid false positives. |
 | **How it works** | Each rule is a function that receives the parsed log and the IP's historical state. All rules are evaluated, and every match is collected. The highest-confidence match becomes the "primary" threat, but all detected stages, MITRE techniques, and threat names are returned. |
 | **What makes it unique** | Traditional SIEM rules use `if/elif` chains where only the first matching rule fires. A log containing both PowerShell and Mimikatz would only trigger "PowerShell" in those systems. ThreatLens fires both, reporting compound threats like `["Suspicious PowerShell Execution", "Credential Dumping Attempt"]` — which is far more useful for SOC analysts. |
@@ -122,12 +120,12 @@ graph TB
 
 ## Module 3: Comprehensive Risk Engine
 
-### Feature 8: 8-Factor Risk Scoring
+### Feature 8: 10-Factor Risk Scoring
 | | |
 |---|---|
 | **File** | `services/risk_engine.py` |
-| **What it does** | Computes a 0-100 risk score using 8 independent factors, each contributing a bounded number of points. |
-| **Factors** | 1. Detection confidence (0-50 pts), 2. Time-decay adjustment (-5 to 0), 3. Campaign stage count (0-30 pts), 4. Multi-stage chain correlation (+15), 5. Highest CVSS from CVE matches (0-20 pts), 6. VirusTotal reputation (0-30 pts), 7. Blocklist status (+25), 8. Threat intel IOC matches (0-20 pts), 9. Failed login count (0-15 pts). |
+| **What it does** | Computes a 0-100 risk score using 10 independent factors, each contributing a bounded number of points. |
+| **Factors** | 1. Detection confidence (0-50 pts), 2. Technique impact of the detected behaviour (0-25 pts), 3. Time-decay adjustment (-5 to 0), 4. Campaign stage count (0-30 pts), 5. Multi-stage chain correlation (+15), 6. Highest CVSS from CVE matches (0-20 pts), 7. VirusTotal reputation (0-30 pts), 8. Blocklist status (+25), 9. Threat intel IOC matches (0-20 pts), 10. Failed login count (0-15 pts). |
 | **Classification** | >= 80 = CRITICAL, >= 55 = HIGH, >= 30 = MEDIUM, < 30 = LOW |
 | **What makes it unique** | Every factor is explained in the response's `risk_factors` array. A SOC analyst can see exactly *why* an event scored 85 — e.g., `["Detection confidence: 95% (+48)", "Campaign: 3 stages (+30)", "IP is on BLOCKLIST (+25)"]`. Full transparency, no black boxes. |
 

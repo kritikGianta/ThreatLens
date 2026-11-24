@@ -3,20 +3,26 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLive } from '../contexts/LiveEventsContext';
+import { LogoMark } from './brand/Logo';
+import LiveToasts, { LivePill } from './live/LiveToasts';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'DB', path: '/dashboard', tag: '01' },
-  { id: 'assets', label: 'Assets', icon: 'AS', path: '/assets', tag: '02' },
-  { id: 'analyze', label: 'Threat Studio', icon: 'TS', path: '/analyze', tag: '03' },
-  { id: 'campaigns', label: 'Campaigns', icon: 'CP', path: '/campaigns', tag: '04' },
-  { id: 'investigate', label: 'Investigate', icon: 'IN', path: '/investigate', tag: '05' },
-  { id: 'soar', label: 'SOAR', icon: 'SR', path: '/soar', tag: '06' },
-  { id: 'intel', label: 'Threat Intel', icon: 'TI', path: '/intel', tag: '07' },
-  { id: 'copilot', label: 'AI Copilot', icon: 'AI', path: '/copilot', tag: '08' },
-  { id: 'mitre', label: 'MITRE', icon: 'MT', path: '/mitre', tag: '09' },
-  { id: 'reports', label: 'Reports', icon: 'RP', path: '/reports', tag: '10' },
-  { id: 'settings', label: 'Settings', icon: 'ST', path: '/settings', tag: '11' },
-];
+  { id: 'dashboard', label: 'Dashboard', icon: 'DB', path: '/dashboard' },
+  { id: 'threat-map', label: 'Threat Map', icon: 'MP', path: '/threat-map' },
+  { id: 'executive', label: 'Executive View', icon: 'EX', path: '/executive' },
+  { id: 'analyze', label: 'Threat Studio', icon: 'TS', path: '/analyze' },
+  { id: 'campaigns', label: 'Campaigns', icon: 'CP', path: '/campaigns' },
+  { id: 'investigate', label: 'Investigate', icon: 'IN', path: '/investigate' },
+  { id: 'soar', label: 'SOAR', icon: 'SR', path: '/soar' },
+  { id: 'intel', label: 'Threat Intel', icon: 'TI', path: '/intel' },
+  { id: 'copilot', label: 'AI Copilot', icon: 'AI', path: '/copilot' },
+  { id: 'mitre', label: 'MITRE ATT&CK', icon: 'MT', path: '/mitre' },
+  { id: 'assets', label: 'Assets', icon: 'AS', path: '/assets' },
+  { id: 'reports', label: 'Reports', icon: 'RP', path: '/reports' },
+  { id: 'demo', label: 'Live Demo', icon: 'LD', path: '/demo' },
+  { id: 'settings', label: 'Settings', icon: 'ST', path: '/settings' },
+].map((item, index) => ({ ...item, tag: String(index + 1).padStart(2, '0') }));
 
 export default function AppShell({ children }) {
   const navigate = useNavigate();
@@ -25,6 +31,7 @@ export default function AppShell({ children }) {
   const { theme, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const live = useLive();
 
   const active = location.pathname.startsWith('/incidents')
     ? 'investigate'
@@ -37,15 +44,9 @@ export default function AppShell({ children }) {
     <div className={`app-shell ${collapsed ? 'shell-collapsed' : ''} ${theme === 'light' ? 'theme-light' : 'theme-dark'}`}>
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <motion.span
-            className="brand-icon"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            style={{ display: 'inline-flex', cursor: 'pointer' }}
-            onClick={() => navigate('/')}
-          >
-            TL
-          </motion.span>
+          <span style={{ display: 'inline-flex', cursor: 'pointer' }} onClick={() => navigate('/')} title="ThreatLens home">
+            <LogoMark size={32} />
+          </span>
 
           {!collapsed && (
             <motion.div
@@ -55,7 +56,7 @@ export default function AppShell({ children }) {
               transition={{ duration: 0.3 }}
             >
               <span className="brand-name">ThreatLens</span>
-              <span className="brand-version">operator workspace</span>
+              <span className="brand-version">Security Operations</span>
             </motion.div>
           )}
 
@@ -73,7 +74,7 @@ export default function AppShell({ children }) {
           {!collapsed && (
             <div className="sidebar-heading">
               <span className="sidebar-kicker">Navigation</span>
-              <span className="sidebar-status-pill">Live</span>
+              <LivePill />
             </div>
           )}
 
@@ -110,14 +111,24 @@ export default function AppShell({ children }) {
 
         <div className="sidebar-footer">
           <div style={{ display: 'flex', gap: '8px', paddingBottom: '8px' }}>
-            <button 
-              className="btn-ghost" 
-              onClick={toggleTheme} 
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid var(--tl-border, rgba(215, 163, 90, 0.1))', padding: '6px' }}
-              title="Toggle Theme"
+            <button
+              className="btn-ghost"
+              onClick={toggleTheme}
+              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: '1px solid var(--tl-border, rgba(215, 163, 90, 0.1))', padding: '6px' }}
+              title="Toggle theme"
             >
-              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+              {theme === 'light' ? '🌙' : '☀️'}{!collapsed && (theme === 'light' ? ' Dark' : ' Light')}
             </button>
+            {live && (
+              <button
+                className="btn-ghost"
+                onClick={live.toggleMute}
+                style={{ flex: 1, border: '1px solid var(--tl-border, rgba(215, 163, 90, 0.1))', padding: '6px' }}
+                title={live.muted ? 'Turn live alerts on' : 'Mute live alerts'}
+              >
+                {live.muted ? '🔕' : '🔔'}{!collapsed && (live.muted ? ' Muted' : ' Alerts')}
+              </button>
+            )}
           </div>
           <div className="user-area" onClick={() => setShowUserMenu(!showUserMenu)} title="Account options">
             <div className="user-avatar">{initials}</div>
@@ -148,7 +159,7 @@ export default function AppShell({ children }) {
                     navigate('/');
                   }}
                 >
-                  Sign Out ->
+                  Sign out →
                 </button>
               </motion.div>
             )}
@@ -156,6 +167,7 @@ export default function AppShell({ children }) {
         </div>
       </aside>
 
+      <LiveToasts />
       <main className="app-main">
         <motion.div
           className="shell-content"

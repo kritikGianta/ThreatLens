@@ -49,6 +49,11 @@ export default function Copilot() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(() => `session_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`);
   const bottomRef = useRef(null);
+  const [llm, setLlm] = useState(null);
+
+  useEffect(() => {
+    api.get('/system/status').then((res) => setLlm(res.data.llm)).catch(() => setLlm({ enabled: false }));
+  }, []);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
@@ -86,7 +91,7 @@ export default function Copilot() {
           <span style={{ fontSize: 14, fontWeight: 600 }}>AI Copilot</span>
         </div>
         <p className="copilot-desc">
-          RAG-powered analyst with access to your real incident data, campaigns, blocklist, and threat intel.
+          Answers grounded in your live incident data, campaigns, blocklist and threat intel — with memory of this conversation.
         </p>
         <div className="copilot-examples">
           <div className="copilot-examples-label">Example Questions</div>
@@ -111,8 +116,8 @@ export default function Copilot() {
             <p className="page-header-sub">Session: {sessionId}</p>
           </div>
           <div className="copilot-status">
-            <span className="badge-dot" style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: 'var(--success)', animation: 'pulse-dot 2s ease infinite', marginRight: 6 }} />
-            LLaMA 3.1 connected
+            <span className="badge-dot" style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: llm?.enabled ? 'var(--success)' : 'var(--warning)', animation: 'pulse-dot 2s ease infinite', marginRight: 6 }} />
+            {llm === null ? 'Checking AI…' : llm.enabled ? `AI model: ${llm.model}` : 'Rule-engine mode (set GROQ_API_KEY for AI)'}
           </div>
         </div>
 

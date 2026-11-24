@@ -323,67 +323,67 @@ const Carousel3DHero = ({ transparent = false }) => {
   const carouselFeatures = [
     {
       title: "SOC Copilot",
-      desc: "AI-driven assistant that answers natural language queries instantly.",
+      desc: "Ask questions in plain English; answers are grounded in your live incident data.",
       color: "#FF6B35",
-      tags: ["GenAI", "NLP"],
-      stats: "0.2s Response Time",
-      list: ["Automated triage", "Contextual alerts", "Natural language search"]
+      tags: ["GenAI", "RAG"],
+      stats: "Per-user memory",
+      list: ["Database-grounded answers", "Multi-turn investigations", "Works without an LLM key"]
     },
     {
       title: "Automated Response",
-      desc: "Auto-block IPs, create firewall rules, and isolate endpoints.",
+      desc: "SOAR rules escalate cases, block attacker IPs and alert the team the moment a case opens.",
       color: "#D3A376",
-      tags: ["SOAR", "Zero-Trust"],
-      stats: "99.9% Autonomous",
-      list: ["Endpoint isolation", "Firewall sync", "Dynamic policy updates"]
+      tags: ["SOAR", "Playbooks"],
+      stats: "Sub-second response",
+      list: ["Auto-block attacker IPs", "Slack, Teams & e-mail alerts", "Firewall-ready blocklist export"]
     },
     {
       title: "Live Threat Map",
-      desc: "Real-time global attack visualization and vector tracking.",
+      desc: "Real attacker IPs from your incidents, geolocated and drawn as they hit your network.",
       color: "#8E9C7E",
-      tags: ["OSINT", "Geo-IP"],
-      stats: "Global Coverage",
-      list: ["Live DDoS tracking", "Botnet mapping", "Geospatial heatmaps"]
+      tags: ["Geo-IP", "Real-time"],
+      stats: "Streamed live",
+      list: ["Attack arcs to HQ", "Top source countries", "Blocked vs. active attackers"]
     },
     {
-      title: "Behavioral Analysis",
-      desc: "ML-driven anomaly detection for user behavior and access.",
+      title: "Campaign Correlation",
+      desc: "Links events from the same attacker across days and recognises 15 known attack chains.",
       color: "#A8B0A5",
-      tags: ["UEBA", "Machine Learning"],
-      stats: "Zero-Day Ready",
-      list: ["Privilege escalation", "Lateral movement", "Insider threat detection"]
+      tags: ["Kill chain", "Correlation"],
+      stats: "No time-out",
+      list: ["Slow brute force", "Distributed password spraying", "Full kill-chain view"]
     },
     {
-      title: "Knowledge Graph",
-      desc: "Entity relationship mapping for complex attack vectors.",
+      title: "MITRE ATT&CK Mapping",
+      desc: "Every detection mapped to ATT&CK, with a live heatmap of what is detectable and what was seen.",
       color: "#FF6B35",
-      tags: ["GraphDB", "Correlation"],
-      stats: "Deep Context",
-      list: ["Asset mapping", "Identity tracing", "Vulnerability chaining"]
+      tags: ["MITRE", "Coverage"],
+      stats: "706 techniques",
+      list: ["Technique explorer", "Coverage heatmap", "Observed incidents per technique"]
     },
     {
-      title: "Compliance Reporter",
-      desc: "Automated audit logging and mapping to global frameworks.",
+      title: "Audit & Reporting",
+      desc: "Every analyst and automation action is recorded; incident and executive reports on demand.",
       color: "#D3A376",
-      tags: ["GRC", "Audit"],
-      stats: "SOC2 & ISO27001",
-      list: ["Continuous monitoring", "Automated evidence", "Policy enforcement"]
+      tags: ["Audit", "RBAC"],
+      stats: "Every action logged",
+      list: ["Role-based access", "Incident reports", "Executive KPIs"]
     },
     {
-      title: "Identity Protection",
-      desc: "Continuous compromised credential and token detection.",
+      title: "Threat Intelligence",
+      desc: "CISA KEV, abuse.ch and IPsum feeds refreshed hourly and checked against every log.",
       color: "#8E9C7E",
-      tags: ["IAM", "Dark Web"],
-      stats: "Real-Time Sync",
-      list: ["MFA bypass alerts", "Token theft detection", "Credential stuffing"]
+      tags: ["OSINT", "IOC"],
+      stats: "5 live feeds",
+      list: ["Known-exploited CVEs", "Botnet C2 servers", "Multi-blocklist IPs"]
     },
     {
-      title: "Vulnerability Scanner",
-      desc: "Continuous asset scanning and automated patch deployment.",
+      title: "Attack Lab",
+      desc: "A real victim server and attacker toolkit in Docker: run nmap, sqlmap and hydra and watch it respond.",
       color: "#A8B0A5",
-      tags: ["CVE", "Patching"],
-      stats: "10M+ Signatures",
-      list: ["Agentless scanning", "Risk prioritization", "Auto-remediation"]
+      tags: ["Docker", "Real tools"],
+      stats: "Real logs",
+      list: ["SSH brute force", "SQL injection", "Post-exploitation"]
     },
   ];
 
@@ -536,7 +536,7 @@ const IngestionUI = () => (
       </Box>
       <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
         <Box sx={{ px: 1.5, py: 0.4, bgcolor: '#1A1A1A', color: '#2ECC71', borderRadius: '4px', fontSize: '0.65rem', fontFamily: 'monospace', fontWeight: 700 }}>
-          ● 142.4k EPS LIVE
+          ● LIVE STREAM
         </Box>
         <Box sx={{ px: 1.2, py: 0.4, bgcolor: '#E8D96B', color: '#1A1A1A', border: '1px solid #1A1A1A', borderRadius: '4px', fontSize: '0.65rem', fontFamily: 'monospace', fontWeight: 700 }}>
           GROQ LLM ACTIVE
@@ -815,7 +815,7 @@ const EnrichmentUI = () => (
         </Box>
 
         <Typography sx={{ fontFamily: 'monospace', color: '#666', fontSize: '0.6rem', flexShrink: 0 }}>
-          TF-IDF RAG QUERY: 500+ WHITEPAPERS INDEXED
+          TF-IDF RAG · KNOWLEDGE BASE + CISA KEV
         </Typography>
       </Box>
 
@@ -883,10 +883,10 @@ const ResponseUI = () => (
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.9 }}>
             {[
-              { step: '01', action: 'BGP Null-Route Host IP', time: '0.004s', status: 'COMPLETE' },
-              { step: '02', action: 'EDR Endpoint Isolation', time: '0.012s', status: 'COMPLETE' },
-              { step: '03', action: 'Revoke Kerberos TGT Tokens', time: '0.028s', status: 'COMPLETE' },
-              { step: '04', action: 'Push SOC Slack Webhook', time: '0.045s', status: 'COMPLETE' },
+              { step: '01', action: 'Escalate case → Investigating', time: 'instant', status: 'COMPLETE' },
+              { step: '02', action: 'Add attacker IP to blocklist', time: 'instant', status: 'COMPLETE' },
+              { step: '03', action: 'Post alert to Slack webhook', time: 'async', status: 'COMPLETE' },
+              { step: '04', action: 'E-mail the on-call analyst', time: 'async', status: 'COMPLETE' },
             ].map((pb, i) => (
               <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.9, bgcolor: '#F9F8F6', borderRadius: '6px', border: '1px solid #E5E0D8' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
@@ -900,29 +900,29 @@ const ResponseUI = () => (
         </Box>
 
         <Box sx={{ mt: 'auto', p: 1, bgcolor: '#F9F8F6', borderRadius: '6px', border: '1px solid #E5E0D8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-          <Typography sx={{ fontSize: '0.6rem', fontWeight: 700, color: '#666' }}>HUMAN LATENCY SAVED</Typography>
-          <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: '#1A1A1A' }}>~14.5 MINUTES</Typography>
+          <Typography sx={{ fontSize: '0.6rem', fontWeight: 700, color: '#666' }}>AUTOMATED IN</Typography>
+          <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: '#1A1A1A' }}>{'< 1 SECOND'}</Typography>
         </Box>
       </Box>
 
-      {/* Right Panel: Zero-Trust Gate Terminal */}
+      {/* Right Panel: Blocklist Gate Terminal */}
       <Box sx={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', bgcolor: '#111', borderRadius: '12px', p: 1.8, border: '1.5px solid #1A1A1A', position: 'relative', overflow: 'hidden', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', pb: 0.8, borderBottom: '1px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
-          <Typography sx={{ fontFamily: 'monospace', color: '#7BA4B8', fontSize: '0.65rem', fontWeight: 700 }}>ZERO-TRUST GATE [SHIELD_V4]</Typography>
+          <Typography sx={{ fontFamily: 'monospace', color: '#7BA4B8', fontSize: '0.65rem', fontWeight: 700 }}>BLOCKLIST GATE</Typography>
           <Typography sx={{ fontFamily: 'monospace', color: '#2ECC71', fontSize: '0.65rem' }}>DAEMON ONLINE</Typography>
         </Box>
 
         <Box sx={{ my: 'auto', fontFamily: 'monospace', fontSize: '0.64rem', lineHeight: 1.5 }}>
           <Typography sx={{ color: '#888', fontSize: '0.62rem' }}>{">"} executing non-blocking daemon thread...</Typography>
-          <Typography sx={{ color: '#2ECC71' }}>[OK] ACL rule injected at perimeter router</Typography>
-          <Typography sx={{ color: '#2ECC71' }}>[OK] Host 10.0.4.22 NIC eth0 disabled</Typography>
-          <Typography sx={{ color: '#F1C40F' }}>[WARN] 14 active TCP sessions dropped</Typography>
-          <Typography sx={{ color: '#2ECC71', fontWeight: 700, mt: 0.8 }}>{">"} THREAT NEUTRALIZED IN 45ms.</Typography>
+          <Typography sx={{ color: '#2ECC71' }}>[OK] 185.220.101.47 added to blocklist</Typography>
+          <Typography sx={{ color: '#2ECC71' }}>[OK] case #412 escalated → Investigating</Typography>
+          <Typography sx={{ color: '#F1C40F' }}>[OK] webhook delivered to #soc-alerts</Typography>
+          <Typography sx={{ color: '#2ECC71', fontWeight: 700, mt: 0.8 }}>{"> RESPONSE COMPLETE IN < 1s."}</Typography>
         </Box>
 
         <Box sx={{ p: 1, bgcolor: 'rgba(123,164,184,0.15)', borderRadius: '6px', border: '1px solid rgba(123,164,184,0.3)', flexShrink: 0 }}>
           <Typography sx={{ color: '#7BA4B8', fontSize: '0.6rem', fontFamily: 'monospace', fontWeight: 700 }}>
-            🔒 STATUS: PERIMETER FULLY LOCKED
+            🔒 STATUS: ATTACKER BLOCKED
           </Typography>
         </Box>
       </Box>
@@ -936,92 +936,89 @@ const FeatureWidget = ({ id, category, pillText, pillColor, title, buttonText, u
   const getModalContent = () => {
     if (id === "01") {
       return {
-        title: "INGESTION PIPELINE // SPECS v4.2",
-        subtitle: "High-throughput telemetry normalization and parsing specifications.",
+        title: "INGESTION PIPELINE",
+        subtitle: "Every source flows through one parse → detect → correlate → respond pipeline.",
         specs: [
-          { label: "Supported Formats", value: "CEF, RFC5424 Syslog, WinEventLog, AWS CloudTrail JSON" },
-          { label: "Max Throughput", value: "100,000+ EPS per processing worker node" },
-          { label: "p99 Latency", value: "4.2 milliseconds (SIMD vector regex extraction)" },
-          { label: "Schema Mapping", value: "Auto-normalized directly to Open Cybersecurity Schema Framework (OCSF 1.1)" }
+          { label: "Log formats", value: "13: Windows Event Log, Linux/SSH, Cisco ASA, Palo Alto, Snort/Suricata, firewall, proxy, AWS CloudTrail, Azure, GCP, web server, DNS, syslog" },
+          { label: "Ingestion channels", value: "Authenticated webhook (API key) for log shippers, 1,000-line bulk jobs, Threat Studio, Windows Event Log collector" },
+          { label: "Measured latency", value: "Benchmark: p50 9 ms · p95 23 ms per event on PostgreSQL; live values on the Executive View" },
+          { label: "Unknown formats", value: "URL-decoding before detection; optional Groq LLM fallback parser" }
         ],
-        code: `// Sample Daemon Parsing Rule (CEF to OCSF)
-rule parse_cef_network_traffic {
-  match: r"^CEF:0\\|(?P<vendor>[^\\|]+)\\|(?P<product>[^\\|]+)\\|"
-  emit: {
-    activity_id: 3,
-    category_uid: 4,
-    device: { vendor: $vendor, product: $product }
-  }
-}`,
+        code: `# Forward logs from any shipper (Filebeat, Fluent Bit, Vector, a script)
+curl -X POST https://threatlens.example.com/api/v1/logs/webhook \\
+  -H "X-API-Key: $INGEST_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"source": "linux-auth",
+       "logs": ["sshd[812]: Failed password for root from 198.51.100.7 port 22 ssh2"]}'
+# → {"status": "accepted", "logs_processed": 1, "incidents_created": 0}`,
         actionText: "Launch Live Log Analyzer →",
         actionPath: "/analyze"
       };
     } else if (id === "02") {
       return {
-        title: "DETECTION ENGINE // SIGMA & YARA RULES",
-        subtitle: "Parallel real-time pattern correlation across MITRE ATT&CK framework.",
+        title: "DETECTION ENGINE",
+        subtitle: "MITRE-mapped rules where every match fires, plus campaign correlation across days.",
         specs: [
-          { label: "Active Rule Count", value: "1,420+ out-of-the-box Sigma & behavioral rules" },
-          { label: "MITRE ATT&CK Coverage", value: "94% coverage across all 14 Enterprise tactics" },
-          { label: "Execution Memory", value: "Lock-free circular ring buffers with zero GC overhead" },
-          { label: "Noise Reduction", value: "AI Bayesian scoring suppresses false positive alerts by 88%" }
+          { label: "Detection rules", value: "28 rules + 2 correlation detections (slow and distributed brute force)" },
+          { label: "Validated on real attacks", value: "93 of 261 public attack recordings (EVTX-ATTACK-SAMPLES) — reproducible script in the repo" },
+          { label: "Attack chains", value: "15 multi-stage patterns, e.g. Breach → Credential Theft → Lateral Spread" },
+          { label: "Noise reduction", value: "Repeat alerts grouped into cases — measured live on the Executive View" }
         ],
-        code: `# Sigma Detection Rule: LSASS Memory Dump
-title: LSASS Process Memory Dump Attempt
-id: 5f113a8f-8b61-41ca-b90f-d37430e4ef39
-status: experimental
-logsource:
-    category: process_access
-    product: windows
-detection:
-    selection:
-        TargetImage|endswith: '\\lsass.exe'
-        GrantedAccess|contains: '0x1fffff'
-    condition: selection
-level: critical`,
+        code: `# A ThreatLens detection rule (services/detector.py)
+{
+    "name": "Credential Dumping Attempt",
+    "check": lambda p, s: bool(RX_CRED_DUMP.search(_raw(p))),
+    "impact": 25, "confidence": 0.90,
+    "mitre": "T1003", "stage": "Credential Access",
+}
+# RX_CRED_DUMP matches lsass, mimikatz, procdump, sekurlsa,
+# ntds.dit, secretsdump, /etc/shadow … with word boundaries`,
         actionText: "Open Threat Investigator →",
         actionPath: "/investigate"
       };
     } else if (id === "03") {
       return {
-        title: "ECOSYSTEM INTEGRATIONS // API MATRIX",
-        subtitle: "Real-time bidirectional threat feeds and SIEM enrichment.",
+        title: "INTEGRATIONS",
+        subtitle: "Public threat intelligence, enrichment services and outbound alerting.",
         specs: [
-          { label: "EDR Connectors", value: "CrowdStrike Falcon, SentinelOne, Microsoft Defender for Endpoint" },
-          { label: "SIEM Sync", value: "Splunk HEC, Elastic Security, QRadar, Azure Sentinel" },
-          { label: "Threat Intel Feeds", value: "AlienVault OTX, VirusTotal Enterprise, MISP, Anomali" },
-          { label: "Webhook Latency", value: "< 15ms bidirectional push notifications" }
+          { label: "Threat-intel feeds", value: "CISA KEV, abuse.ch Feodo Tracker, IPsum (no key) · URLhaus, ThreatFox (free abuse.ch key)" },
+          { label: "Enrichment", value: "VirusTotal reputation, NIST NVD CVEs, ip-api / IPinfo / OpenCage geolocation" },
+          { label: "AI", value: "Groq-hosted Llama for summaries and the Copilot — optional, with a rule-engine fallback" },
+          { label: "Outbound", value: "Slack, Teams or any webhook · SMTP e-mail · firewall-ready blocklist export" }
         ],
-        code: `{
-  "connector_status": "ACTIVE",
-  "sync_interval": "REALTIME_WEBSOCKET",
-  "active_feeds": ["CrowdStrike_Falcon_EDR", "VirusTotal_Enterprise"],
-  "iocs_ingested_today": 142850,
-  "correlation_accuracy": "99.98%"
+        code: `GET /api/v1/system/status
+{
+  "database": { "engine": "postgresql", "reachable": true },
+  "mitre_techniques_loaded": 706,
+  "integrations": [
+    { "name": "Groq LLM",   "env_var": "GROQ_API_KEY",     "configured": true },
+    { "name": "VirusTotal", "env_var": "VT_API_KEY",       "configured": true },
+    { "name": "abuse.ch",   "env_var": "ABUSECH_AUTH_KEY", "configured": false }
+  ]
 }`,
         actionText: "Explore Threat Intel Feeds →",
         actionPath: "/intel"
       };
     } else {
       return {
-        title: "AUTONOMOUS SOAR // PLAYBOOK ENGINE",
-        subtitle: "Zero-touch containment and automated threat isolation workflows.",
+        title: "SOAR AUTOMATION",
+        subtitle: "Rules that act in the same transaction that detected the threat.",
         specs: [
-          { label: "Playbook Engine", value: "Deterministic DAG (Directed Acyclic Graph) executor" },
-          { label: "Autonomous Actions", value: "Firewall IP Block, EDR Host Isolation, Revoke IAM Sessions" },
-          { label: "Containment Speed", value: "1.4 seconds (MTTC) from high-confidence alert detection" },
-          { label: "Human-In-The-Loop", value: "Optional Slack/Teams approval prompts for critical asset actions" }
+          { label: "Conditions", value: "Severity, minimum severity, threat type, multi-stage campaign" },
+          { label: "Actions", value: "Escalate case, block IP, webhook (Slack/Teams/custom), e-mail" },
+          { label: "When rules run", value: "On every new case and whenever a case escalates — never twice for the same rule" },
+          { label: "Accountability", value: "Every automated action is written to the case and the immutable audit log" }
         ],
-        code: `// SOAR Playbook: Ransomware Containment Workflow
-playbook contain_ransomware {
-  trigger: alert.severity == "CRITICAL" && alert.tag == "RANSOMWARE"
-  actions: [
-    edr.isolate_host(alert.hostname),
-    firewall.block_ip(alert.source_ip),
-    slack.notify_channel("#soc-incidents", alert.summary)
-  ]
-}`,
-        actionText: "View SOAR Playbooks →",
+        code: `POST /api/v1/alerts/rules
+{
+  "name": "Auto-block critical attackers",
+  "condition_type": "risk_level",
+  "condition_value": "CRITICAL",
+  "action_type": "block_ip"
+}
+# → attacker IPs on CRITICAL cases are blocked automatically
+#   and shown in SOAR → IP Blocklist (exportable as TXT/CSV)`,
+        actionText: "View SOAR Rules →",
         actionPath: "/soar"
       };
     }
@@ -1321,7 +1318,7 @@ const SOARVisual = () => (
   </Box>
 );
 
-const HoneypotVisual = () => (
+const AttackOriginsVisual = () => (
   <Box sx={{ width: '100%', height: '100%', bgcolor: 'transparent', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
     {[...Array(6)].map((_, i) => {
       const angle = (i / 6) * Math.PI * 2;
@@ -1336,14 +1333,14 @@ const HoneypotVisual = () => (
       <Typography sx={{ color: '#111', fontSize: '1.2rem', fontWeight: 700 }}>!</Typography>
     </Box>
     <Typography sx={{ position: 'absolute', bottom: 24, left: 24, fontFamily: 'monospace', fontSize: '0.65rem', color: 'rgba(0,0,0,0.5)', letterSpacing: '0.1em' }}>
-      DELIBERATE LURE ACTIVE<br />Feodo Tracker · URLhaus
+      LIVE ATTACK ORIGINS<br />geolocated · streamed in real time
     </Typography>
   </Box>
 );
 
-const ZeroTrustVisual = () => (
+const AttackLabVisual = () => (
   <Box sx={{ width: '100%', height: '100%', bgcolor: 'transparent', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, p: 3 }}>
-    {['TLS Handshake', 'Token Verify', 'Zero-Trust Check', 'Access Granted'].map((step, i) => (
+    {['nmap service scan', 'sqlmap injection', 'hydra SSH brute force', 'Detected · blocked'].map((step, i) => (
       <motion.div key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }} style={{ width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 1.5, borderRadius: '8px', border: `1px solid rgba(0,0,0,0.1)`, bgcolor: 'rgba(0,0,0,0.03)' }}>
           <Box sx={{ width: '12px', height: '12px', borderRadius: '50%', bgcolor: i === 3 ? '#111' : 'rgba(0,0,0,0.3)' }} />
@@ -1539,106 +1536,106 @@ const ArchitectureHoverExpand = ({ transparent = false }) => {
     {
       title: "Ingestion Engine", tag: "CORE", color: '#4A451A',
       bg: '#E2D775', image: "/assets/cards/img1.webp",
-      desc: "The central nervous system of ThreatLens. It asynchronously parses raw, unstructured logs from over a dozen disparate formats—including Windows Event Logs, Cisco ASA, AWS CloudTrail, and standard Syslog—and normalizes them into 9 rigidly structured fields. When standard RegEx patterns fail to parse highly obfuscated or unknown proprietary formats, it seamlessly falls back to a Groq-powered LLM parsing agent. This guarantees zero data loss; no log is ever rejected or dropped due to formatting errors.",
-      stat1: "12+ formats", stat2: "LLM Parsing Fallback",
+      desc: "Every log enters through one pipeline — Threat Studio, the authenticated webhook used by log shippers, bulk jobs or the Windows collector. Extractors recognise 13 formats (Windows Event Log, Linux/SSH, Cisco ASA, Palo Alto, Snort/Suricata, firewalls, proxies, AWS CloudTrail, Azure, GCP, web servers, DNS and syslog) and normalise them into structured fields. URL-encoded payloads are decoded before detection, and an optional Groq LLM parses formats no pattern recognises.",
+      stat1: "13 log formats", stat2: "< 20 ms per event",
       visual: <IngestionVisual />
     },
     {
-      title: "Intelligence Graph", tag: "DATA", color: '#1C2E17',
-      bg: '#85AA7F', image: "/assets/cards/img2.webp",
-      desc: "Moving beyond flat tables, the Intelligence Graph maps threat actors, known malware families, vulnerable endpoints, and network assets into a complex relational database. Heavily powered by the MITRE ATT&CK framework, it automatically tracks full kill-chain progression across multiple seemingly unrelated incidents. If a phishing payload drops a binary that later initiates lateral movement, the graph visually links these events into a single unbroken timeline of adversary behavior.",
-      stat1: "Relational Mapping", stat2: "MITRE ATT&CK Integration",
+      title: "ATT&CK Mapping", tag: "DATA", color: '#1C2E17',
+      bg: '#85AA7F', image: null,
+      desc: "Every detection is mapped to a MITRE ATT&CK technique and tactic from the official catalogue of 706 techniques. A live coverage heatmap shows which techniques ThreatLens can detect and how often each has been observed in your environment, and every campaign is drawn as a kill chain across the tactics it reached.",
+      stat1: "706 techniques", stat2: "Live coverage heatmap",
       visual: <GraphVisual />
     },
     {
       title: "AI Reasoning Core", tag: "ML", color: '#2A1F45',
       bg: '#9A8BBA', image: "/assets/cards/img3.webp",
-      desc: "The analytical brain of the platform. Instead of forcing analysts to decipher raw hex dumps and JSON payloads, the AI Reasoning Core utilizes ultra-fast Groq LLMs to generate human-readable, SOC-grade summaries for every detected anomaly. It is deeply integrated with a TF-IDF RAG (Retrieval-Augmented Generation) system, actively pulling contextual intelligence from over 500 continuously updated cybersecurity whitepapers, CVE reports, and threat intel blogs.",
-      stat1: "Groq LLM Engine", stat2: "TF-IDF RAG · 500+ docs",
+      desc: "Turns detections into analyst-grade reports: executive summary, technical analysis, business impact and recommended actions. With a Groq key it uses a Llama 3.3 70B model, grounded by a TF-IDF retrieval index over a curated threat knowledge base and the CISA Known Exploited Vulnerabilities catalogue. Without a key, a deterministic rule engine writes the same sections from the same evidence — the product never depends on an AI being online.",
+      stat1: "Groq LLM (optional)", stat2: "Retrieval-grounded",
       visual: <AIVisual />
     },
     {
       title: "Automated SOAR", tag: "OPS", color: '#1A3445',
       bg: '#7BA4B8', image: "/assets/cards/img4.webp",
-      desc: "Security Orchestration, Automation, and Response operating at machine speed. This highly configurable rule engine evaluates the metadata of every single incident in real-time. Based on confidence thresholds, it fires automated, non-blocking asynchronous daemon threads to execute countermeasures—such as aggressively null-routing a malicious IP at the firewall level, pushing a webhook to the SOC Slack channel, or escalating the ticket status—all before a human even clicks the alert.",
-      stat1: "4 Action Types", stat2: "Machine-speed Execution",
+      desc: "Rules evaluate every new or escalating case against severity, threat-type and multi-stage conditions, then act in the same transaction that detected it: escalate the case, add the attacker to the blocklist, call a Slack, Teams or custom webhook, or send an e-mail. Every automated action is recorded on the case and in the audit log.",
+      stat1: "4 action types", stat2: "Sub-second response",
       visual: <SOARVisual />
     },
     {
-      title: "Global Honeypot", tag: "INTEL", color: '#4A1D20',
-      bg: '#C97A7E', image: "/assets/cards/img5.webp",
-      desc: "An active defense mechanism that deploys deliberate, highly monitored fake entry points across your perimeter. These sensors are intimately linked to live, real-world threat feeds like the Abuse.ch Feodo Tracker and URLhaus. Any external connection attempting to probe these fake endpoints, or communicating with known botnet Command & Control (C2) servers, is instantaneously auto-flagged as a CRITICAL threat, bypassing standard scoring logic completely.",
-      stat1: "Active Defense", stat2: "Zero-Day Auto-Flag",
-      visual: <HoneypotVisual />
+      title: "Attack Lab", tag: "INTEL", color: '#4A1D20',
+      bg: '#C97A7E', image: null,
+      desc: "A real, deliberately weak Linux server (OpenSSH + nginx) and an attacker container with nmap, sqlmap and hydra run on an isolated Docker network. A log shipper forwards the server's genuine logs to ThreatLens over the authenticated webhook, so you can launch a real intrusion and watch every stage get detected, correlated and blocked.",
+      stat1: "Real tools", stat2: "Real logs",
+      visual: <AttackOriginsVisual />
     },
     {
-      title: "Zero-Trust Proxy", tag: "NET", color: '#153A33',
-      bg: '#72B1A4', image: "/assets/cards/img6.webp",
-      desc: "A brutal, uncompromising network enforcement layer. Every single log source IP address must pass through this bidirectional blocklist gate before any deeper analysis is even allowed to execute. IP addresses that are dynamically added to the blocklist are auto-escalated to a CRITICAL severity rating (score 95+), regardless of the actual log content. This ensures known bad actors waste zero compute cycles on downstream machine learning models.",
-      stat1: "Bidirectional Gate", stat2: "Score 95+ Enforced",
-      visual: <ZeroTrustVisual />
+      title: "Live Threat Map", tag: "NET", color: '#153A33',
+      bg: '#72B1A4', image: null,
+      desc: "Attacker IP addresses from your incidents are geolocated and drawn on a world map, with arcs to your headquarters as attacks happen. Points are sized by alert volume, coloured by severity and marked once SOAR has blocked them — streamed to every analyst's browser in real time over Server-Sent Events.",
+      stat1: "Real-time stream", stat2: "Geolocated attackers",
+      visual: <AttackLabVisual />
     },
     {
-      title: "Anomaly Detection", tag: "ML", color: '#4A210D',
-      bg: '#E29D75', image: "/assets/cards/img7.webp",
-      desc: "Unlike legacy SIEMs that stop processing after a single rule match, this engine runs all 11 complex, MITRE-mapped detection heuristics simultaneously against every incoming log. This allows it to identify sophisticated compound threats. For example, if an attacker executes an encoded PowerShell script that subsequently attempts to dump LSASS memory via Mimikatz, the engine will fire both independent alerts and merge them into a single, high-confidence meta-alert.",
-      stat1: "11 Simultaneous Rules", stat2: "Compound Threat Merging",
+      title: "Detection Engine", tag: "ML", color: '#4A210D',
+      bg: '#E29D75', image: null,
+      desc: "Twenty-eight MITRE-mapped rules run against every log and all matching rules fire, so an encoded PowerShell command that also dumps LSASS raises both detections. Rules are context-aware — a scanner requesting /ftp/upload is reconnaissance, not exfiltration — and two correlation detections catch slow and distributed brute force across days.",
+      stat1: "28 rules, all fire", stat2: "Context-aware",
       visual: <AnomalyVisual />
     },
     {
       title: "Risk Engine", tag: "SCORE", color: '#451616',
       bg: '#C47070', image: "/assets/cards/img8.webp",
-      desc: "A mathematically rigorous scoring algorithm that computes a transparent, highly accurate 0–100 risk score for every entity. It evaluates 8 fully independent risk factors: baseline detection confidence, real-time VirusTotal API reputation, known CVSS vulnerability metrics, internal blocklist presence, strict IOC feed matches, MITRE campaign stage progression, historical failed login velocity, and cryptographic time-decay formulas to age out stale threats.",
-      stat1: "8 Independent Factors", stat2: "Transparent Mathematics",
+      desc: "A transparent 0–100 score built from ten factors: detection confidence, technique impact, time decay, campaign depth, attack-chain match, CVSS of related CVEs, VirusTotal reputation, blocklist status, threat-intel matches and failed-login history. Every point is itemised on the case, so an analyst can always see why something is CRITICAL.",
+      stat1: "10 scoring factors", stat2: "Every point explained",
       visual: <RiskEngineVisual />
     },
     {
       title: "Threat Intel Feeds", tag: "OSINT", color: '#123035',
       bg: '#6E9BA1', image: "/assets/cards/img9.webp",
-      desc: "The lifeblood of our detection accuracy. This daemon automatically fetches, deduplicates, and normalizes live Indicators of Compromise (IOCs) from premier global intelligence sources. By actively synchronizing with the CISA KEV (Known Exploited Vulnerabilities) catalog, the Abuse.ch Feodo Tracker, and URLhaus, ThreatLens arms its detection engines with the exact same actionable, nation-state-level intelligence utilized by Fortune 500 Security Operations Centers.",
-      stat1: "Gov-Level Feeds", stat2: "Continuous Sync",
+      desc: "Five public feeds refresh automatically: the CISA Known Exploited Vulnerabilities catalogue, abuse.ch Feodo Tracker botnet servers and IPsum's multi-blocklist IPs need no key, and URLhaus and ThreatFox are enabled with a free abuse.ch key. Every incoming log is cross-checked against thousands of indicators, and a known-bad IP is a detection on its own.",
+      stat1: "5 live feeds", stat2: "Hourly refresh",
       visual: <ThreatIntelVisual />
     },
     {
       title: "Campaign Tracker", tag: "HUNT", color: '#241D45',
       bg: '#9089B3', image: "/assets/cards/img10.webp",
-      desc: "Advanced persistent threats don't operate in 24-hour windows, and neither do we. The Campaign Tracker persistently links related, low-severity attack events into massive, longitudinal campaigns that never age out or time out. If a hostile IP address performs a noisy brute-force attack in January, goes totally dark, and then successfully returns via lateral movement in March, the system instantly identifies it as the exact same protracted attack chain.",
-      stat1: "Infinite Retention", stat2: "Longitudinal Linking",
+      desc: "Events from the same attacker are linked into a campaign that never times out: a brute force in January and lateral movement in March land in the same story. Fifteen known attack chains — such as Breach → Credential Theft → Lateral Spread, or a full ransomware kill chain — raise confidence when they appear.",
+      stat1: "No time-out", stat2: "15 attack chains",
       visual: <CampaignVisual />
     },
     {
       title: "Blocklist Gate", tag: "OPS", color: '#47210E',
       bg: '#D68965', image: "/assets/cards/img11.webp",
-      desc: "More than just a static text file of bad IPs, the Blocklist Gate is a dynamic, active enforcement perimeter. It is continuously populated both manually by human threat hunters and autonomously by SOAR retaliation rules. Because it sits at the very edge of the ingestion pipeline, every single log entry is checked against it in microseconds, instantly blocking repeat offenders and known bad actors before expensive downstream analysis is triggered.",
-      stat1: "Microsecond Checks", stat2: "Autonomous Updates",
+      desc: "Every log's source IP is checked against the blocklist before scoring, and a blocked address is escalated to CRITICAL regardless of content. Analysts block and unblock from the SOAR page, SOAR rules add attackers automatically, and the list exports as firewall-ready text or CSV.",
+      stat1: "Auto + manual", stat2: "Firewall export",
       visual: <BlocklistVisual />
     },
     {
       title: "Correlation Engine", tag: "5MIN", color: '#293813',
       bg: '#9DB374', image: "/assets/cards/img12.webp",
-      desc: "Operating completely independently of the real-time stream, the Correlation Engine performs a massive, backward-looking sweep of the entire database every 5 minutes. It is specifically designed to hunt for 'low and slow' attacks that evade real-time rules: highly distributed brute-force attempts spread across dozens of IPs, incredibly slow password spraying over 12+ hour periods, and silent campaign escalations. It auto-blocks repeat offenders instantly.",
-      stat1: "Cron-Based Sweeps", stat2: "Low & Slow Detection",
+      desc: "Every five minutes a background sweep hunts for what single events can't reveal: slow brute force spread over 12+ hours, password spraying from many IPs against one account, campaigns that have reached three stages, and repeat offenders that should be blocked.",
+      stat1: "5-minute sweeps", stat2: "Low & slow detection",
       visual: <CorrelationVisual />
     },
     {
       title: "SOC Copilot", tag: "AI", color: '#421626',
       bg: '#B57088', image: "/assets/cards/img13.webp",
-      desc: "An incredibly advanced, database-aware AI analyst living directly inside your terminal. You can ask it natural language questions ('Which IPs targeted our SQL servers yesterday?'), and it will autonomously write, execute, and interpret the actual MySQL queries required to get the answer. It maintains context, remembering the last 10 messages per session, allowing for deep, multi-turn investigative conversations and rapid threat hunting.",
-      stat1: "Natural DB Querying", stat2: "Multi-turn Memory",
+      desc: "Ask questions in plain English — 'what happened to 203.0.113.45?' — and get answers grounded in your live incidents, campaigns, blocklist and threat intelligence. Conversations keep per-user memory for follow-up questions, and without an LLM key the Copilot still answers with a structured briefing built from the same data.",
+      stat1: "Grounded in your data", stat2: "Per-user memory",
       visual: <SOCCopilotVisual />
     },
     {
       title: "Attack Timeline", tag: "UI", color: '#453211',
       bg: '#D1AC6B', image: "/assets/cards/img14.webp",
-      desc: "The ultimate visualization of an active breach. The Attack Timeline automatically merges thousands of lines of raw, chaotic log data and disparate incident alerts into a single, highly readable, chronological narrative. SOC analysts can literally read the complete story of the attack, watching it unfold step-by-step from the very first reconnaissance probe, through the initial foothold, lateral movement, and up to the final data exfiltration event.",
-      stat1: "Narrative Merging", stat2: "Step-by-step Tracing",
+      desc: "For any IP address, raw log lines and the incidents they produced are merged into one chronological story alongside the campaign they belong to — from the first scan to the final exfiltration attempt.",
+      stat1: "Logs + incidents", stat2: "Per-IP dossier",
       visual: <TimelineVisual />
     },
     {
       title: "Bulk Ingestion", tag: "ASYNC", color: '#113324',
       bg: '#62A388', image: "/assets/cards/img15.webp",
-      desc: "Built for massive enterprise scale. The Bulk Ingestion endpoint accepts colossal JSON arrays containing thousands of logs via a single POST request. It returns immediately to the client with a job_id, preventing timeout blocks, and processes the payload in the background in highly optimized batches of 50. Because each batch commits independently, absolutely no progress is lost in the event of a database lock or network failure.",
-      stat1: "Batch Optimization", stat2: "Zero-loss Commits",
+      desc: "POST up to 1,000 log lines and get a job ID straight back. The batch is processed in the background in groups of 50, each committed independently so a malformed line never loses progress, and a status endpoint reports processed lines, incidents, threat-intel hits and errors.",
+      stat1: "1,000 lines / job", stat2: "Per-batch commits",
       visual: <BulkIngestVisual />
     },
   ];
@@ -1947,13 +1944,13 @@ const MergedEcosystemExperience = () => {
 
   const ContinuousTickerBanner = () => {
     const tickerItems = [
-      "THREATLENS AI OPERATING SYSTEM",
-      "ZERO-TRUST TELEMETRY PIPELINE",
-      "AUTONOMOUS THREAT HUNTING",
-      "10M+ ACTIVE SIGNATURES",
-      "BEHAVIORAL ANOMALY DETECTION",
+      "THREATLENS SECURITY OPERATIONS",
+      "REAL-TIME DETECTION PIPELINE",
+      "MULTI-STAGE CAMPAIGN CORRELATION",
+      "706 MITRE ATT&CK TECHNIQUES",
+      "LIVE THREAT-INTEL FEEDS",
       "SOC COPILOT NATURAL LANGUAGE QUERY",
-      "SUB-MILLISECOND ATTACK REMEDIATION"
+      "AUTOMATED SOAR RESPONSE"
     ];
     const repeatedItems = [...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems];
 
@@ -2063,7 +2060,7 @@ const paradigmItems = [
     side: 'right',
     num: '01',
     category: 'THE CORE ISSUE',
-    highlight: '277-Day Avg. Dwell Time',
+    highlight: '277 Days to Contain a Breach (IBM, 2022)',
     label: 'Flawed Premise: Reactive Defense',
     text: 'Traditional security architecture operates purely post-breach, relying on static signatures and stale log indexing. By the time an alert triggers in a legacy SIEM dashboard, sophisticated actors have already established persistence across internal subnets.',
     takeaway: 'Takeaway: Relying on post-breach detection guarantees adversary persistence.'
@@ -2072,9 +2069,9 @@ const paradigmItems = [
     side: 'left',
     num: '02',
     category: 'HUMAN BOTTLENECK',
-    highlight: '94.1% False Positives',
+    highlight: 'Alert Fatigue',
     label: 'Analyst Fatigue & Fragmented Data',
-    text: 'Enterprise SOC teams face an unsustainable influx of over 10,000 uncoordinated daily alerts across disconnected monitoring tools. Human operators spend 80% of their shifts manually cross-referencing noise, creating dangerous blind spots during critical attack windows.',
+    text: 'SOC teams face thousands of uncoordinated alerts a day across disconnected tools, and much of an analyst\'s shift goes to manually cross-referencing noise — creating blind spots during the attack windows that matter most.',
     takeaway: 'Takeaway: Alert overload turns human analysts into a structural liability.'
   },
   {
@@ -2092,29 +2089,29 @@ const prototypeItems = [
   {
     side: 'left',
     num: '01',
-    category: 'KERNEL TELEMETRY',
-    highlight: '2.4M Events / Second',
-    label: 'Living Infrastructure Graph',
-    text: 'ThreatLens deploys lightweight eBPF sensors at the OS kernel layer, capturing network, identity, and cloud telemetry with zero copy overhead. Disparate streams are continuously synthesized into a real-time, unified knowledge graph of your entire infrastructure.',
-    takeaway: 'Impact: Zero log parsing latency with complete kernel-level visibility.'
+    category: 'UNIFIED INGESTION',
+    highlight: '13 Log Formats',
+    label: 'One Pipeline for Every Source',
+    text: "Windows, Linux, firewalls, proxies, cloud audit logs and web servers stream in through an authenticated webhook, bulk jobs or Threat Studio. Each event is parsed, decoded and normalised before a single rule runs.",
+    takeaway: "Impact: one consistent view of activity, whatever produced the log."
   },
   {
     side: 'right',
     num: '02',
-    category: 'NEURAL CORRELATION',
-    highlight: '< 12ms Latency',
-    label: 'Contextual AI Intelligence',
-    text: 'Specialized autonomous AI agents continuously traverse the live telemetry graph. Instead of flooding operators with raw alerts, they correlate multi-vector anomalies in real time, mapping verified attack paths with zero false alarms.',
-    takeaway: 'Impact: High-fidelity attack synthesis replaces fragmented alert queues.'
+    category: 'CORRELATED DETECTION',
+    highlight: '28 Rules · 15 Attack Chains',
+    label: 'Context Instead of Alert Floods',
+    text: "Every matching rule fires, events from the same attacker are linked into campaigns that never time out, and repeat alerts collapse into a single case \u2014 so analysts see the attack story, not hundreds of fragments.",
+    takeaway: "Impact: fewer, richer cases with the full kill chain attached."
   },
   {
     side: 'left',
     num: '03',
-    category: 'AUTONOMOUS STRIKE',
-    highlight: 'Zero Human Delay',
-    label: 'Sub-Second Countermeasures',
-    text: 'When a verified threat sequence is detected, ThreatLens traces the origin and maps the blast radius instantly. Surgical eBPF micro-segmentation rules are deployed to sever attacker connections before human intervention is required.',
-    takeaway: 'Impact: Autonomous end-to-end neutralization in single-digit milliseconds.'
+    category: 'AUTOMATED RESPONSE',
+    highlight: 'Under 20 ms per Event',
+    label: 'Respond While the Attack Is Happening',
+    text: "Severity-based SOAR rules escalate cases, block attacker IPs and notify the team in the same transaction that detected the threat, and an AI copilot answers questions about it in plain English.",
+    takeaway: "Impact: containment starts in under a second, with every action audited."
   },
 ];
 
@@ -2348,7 +2345,7 @@ const PrototypeFlowSection = () => {
 
             <Box sx={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '1240px', mx: 'auto', display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'flex-end', pt: { xs: 8, md: 10 }, px: { xs: 4, md: 6 }, mb: 1, gap: 4, pointerEvents: 'auto' }}>
               <Typography sx={{ fontSize: { xs: '0.86rem', md: '0.92rem' }, lineHeight: 1.6, color: '#D0DED4', opacity: 0.8, maxWidth: '460px' }}>
-                ThreatLens replaces manual triage with autonomous eBPF telemetry, neural knowledge graphs, and AI agent swarms that detect, trace, and contain threats in single-digit milliseconds.
+                ThreatLens turns raw logs into correlated, explained cases and responds automatically — in milliseconds per event — with an AI copilot for the questions that follow.
               </Typography>
               <Box sx={{ textAlign: { xs: 'left', md: 'right' } }}>
                 <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 700, color: '#8DA696', letterSpacing: '0.12em', mb: 0.5 }}>
@@ -2509,7 +2506,7 @@ const PrototypeFlowSection = () => {
                   [ SYS_DATUM // SEC_04_END ]
                 </Typography>
                 <Typography sx={{ position: 'absolute', top: '17.2%', right: '15.5%', fontFamily: 'monospace', fontSize: '0.68rem', color: '#1A1A1A', opacity: 0.7, letterSpacing: '0.12em' }}>
-                  [ ARCH_EBPF_VERIFIED ]
+                  [ PIPELINE_ONLINE ]
                 </Typography>
               </Box>
 
@@ -2673,7 +2670,7 @@ const Navbar = () => {
           fontFamily: fontSans, fontWeight: 500, fontSize: { xs: '1.15rem', md: '1.4rem' },
           cursor: 'pointer', letterSpacing: '-0.02em', whiteSpace: 'nowrap'
         }}>
-          ThreatLens®
+          ThreatLens
         </Typography>
       </Box>
       <Box sx={{ display: 'flex', gap: { xs: 1, md: 2 } }}>

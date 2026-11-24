@@ -85,6 +85,15 @@ def test_benign_logs_do_not_fire(raw):
     assert names(raw) == set()
 
 
+def test_normal_windows_logon_is_not_credential_dumping():
+    # Every Windows logon (4624) names lsass.exe as the acting process — that must not alert.
+    logon = ("[REAL_LOG] EventID=4624 LogName=Security Message=An account was successfully logged on. "
+             "Account Name: j.smith Logon Type: 2 Process Name: C:\\Windows\\System32\\lsass.exe")
+    assert "Credential Dumping Attempt" not in names(logon)
+    sysmon_target = "EventID=10 SourceImage=C:\\Users\\x\\procdump64.exe TargetImage=C:\\Windows\\system32\\lsass.exe GrantedAccess=0x1fffff"
+    assert "Credential Dumping Attempt" in names(sysmon_target)
+
+
 def test_multi_rule_fire():
     detected = names("powershell -enc SQBFAFgA Invoke-Mimikatz sekurlsa::logonpasswords")
     assert {"Suspicious PowerShell Execution", "Credential Dumping Attempt"} <= detected

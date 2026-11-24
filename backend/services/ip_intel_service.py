@@ -187,3 +187,85 @@ def enrich_ip(ip: str) -> Dict:
         "risk_assessment": {"risk_score": score, "risk_level": level, "risk_factors": factors},
         "enriched_at": datetime.utcnow().isoformat(),
     }
+
+
+# ── Batch geolocation for the live threat map ───────────────────────────────
+IPAPI_BATCH_URL = "http://ip-api.com/batch"
+_hq_cache: Dict = {}
+_geo_failures = TTLCache(maxsize=4000, ttl_seconds=60)   # don't hammer the provider after a failed lookup
+_batch_backoff = {"until": 0.0}
+
+
+def geolocate_many(ips) -> Dict[str, Dict]:
+    """Geolocate many public IPs with ip-api's batch endpoint (100 per call), using the shared cache."""
+    results: Dict[str, Dict] = {}
+    pending = []
+    import time as _time
+
+    for ip in dict.fromkeys(ips):
+        if not is_public_ip(ip):
+            continue
+        cached = _geo_cache.get(ip)
+        if cached and cached.get("lat") is not None:
+            results[ip] = cached
+        elif not _geo_failures.get(ip):
+            pending.append(ip)
+    if _time.monotonic() < _batch_backoff["until"]:
+        return results  # provider asked us to slow down
+    for start in range(0, len(pending), 100):
+        chunk = pending[start:start + 100]
+        try:
+            response = http_client.post(
+                IPAPI_BATCH_URL,
+                params={"fields": "status,query,country,countryCode,regionName,city,lat,lon,isp,org,as"},
+                json=chunk,
+                timeout=8,
+            )
+            if response.status_code != 200:
+                logger.warning("ip-api batch returned HTTP %s", response.status_code)
+                if response.status_code == 429:
+                    _batch_backoff["until"] = _time.monotonic() + 30
+                break
+            if response.headers.get("X-Rl") == "0":  # last request allowed in this window
+                _batch_backoff["until"] = _time.monotonic() + float(response.headers.get("X-Ttl", "30"))
+            rows = response.json()
+        except (httpx.HTTPError, ValueError) as exc:
+            logger.warning("ip-api batch lookup failed: %s", exc)
+            break
+        for row in rows:
+            if row.get("status") != "success":
+                if row.get("query"):
+                    _geo_failures.set(row["query"], True)
+                continue
+            geo = {
+                "ip": row["query"], "city": row.get("city") or "Unknown", "region": row.get("regionName", ""),
+                "country": row.get("country") or "Unknown", "country_code": row.get("countryCode", ""),
+                "lat": row.get("lat"), "lon": row.get("lon"), "isp": row.get("isp") or "Unknown",
+                "org": row.get("org") or "Unknown", "as": row.get("as", ""), "source": "ip-api.com",
+            }
+            _geo_cache.set(row["query"], geo)
+            results[row["query"]] = geo
+    return results
+
+
+def get_hq_location() -> Dict:
+    """Location of 'our' network on the threat map: env override, else this server's public IP location."""
+    import os
+
+    if os.getenv("ORG_HQ_LAT") and os.getenv("ORG_HQ_LON"):
+        try:
+            return {"name": os.getenv("ORG_HQ_NAME") or "Headquarters", "lat": float(os.getenv("ORG_HQ_LAT")),
+                    "lon": float(os.getenv("ORG_HQ_LON")), "source": "configured"}
+        except ValueError:
+            pass
+    if _hq_cache:
+        return _hq_cache
+    try:
+        data = http_client.get("http://ip-api.com/json/", params={"fields": "status,city,country,lat,lon"}, timeout=5).json()
+        if data.get("status") == "success":
+            _hq_cache.update({"name": os.getenv("ORG_HQ_NAME") or f"HQ · {data.get('city')}, {data.get('country')}",
+                              "lat": data["lat"], "lon": data["lon"], "source": "server public IP"})
+            return _hq_cache
+    except (httpx.HTTPError, ValueError) as exc:
+        logger.warning("Could not determine HQ location: %s", exc)
+    return {"name": os.getenv("ORG_HQ_NAME") or "Headquarters", "lat": 20.0, "lon": 0.0, "source": "fallback"}

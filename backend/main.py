@@ -14,7 +14,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -27,13 +26,14 @@ configure_logging()
 
 from dependencies.auth import get_current_user  # noqa: E402
 from models.database import SessionLocal, check_database, init_db, safe_database_url  # noqa: E402
-from routers import alerts, analysis, assets, auth, chat, cve, dashboard, logs, mitre, report, system  # noqa: E402
+from routers import alerts, analysis, assets, auth, chat, cve, dashboard, demo, logs, mitre, report, stream, system  # noqa: E402
 from services.alert_service import create_default_rules  # noqa: E402
 from services.app_settings import get_app_settings  # noqa: E402
 from services.correlation_engine import run_correlation_sweep  # noqa: E402
 from services.incident_ops import run_incident_lifecycle_sweep  # noqa: E402
 from services.log_collector import start_real_log_collector  # noqa: E402
-from services.log_seed import seed_demo_attacks  # noqa: E402
+from services.log_seed import ensure_demo_viewer, seed_demo_attacks  # noqa: E402
+from services.simulator import simulator  # noqa: E402
 from services.retention_manager import enforce_retention_policies  # noqa: E402
 from services.threat_intel_ingestion import ingest_all  # noqa: E402
 from state import metrics  # noqa: E402
@@ -94,6 +94,7 @@ async def lifespan(app: FastAPI):
     try:
         create_default_rules(db)
         seed_demo_attacks(db)
+        ensure_demo_viewer(db)
     except Exception:
         logger.exception("Startup seeding failed (continuing)")
     finally:
@@ -113,8 +114,12 @@ async def lifespan(app: FastAPI):
         logger.info("Background scheduler started (correlation 5m, intel %sm, retention 30m, lifecycle 20m)", max(interval, 15))
 
     start_real_log_collector()
+    if settings.LIVE_TRAFFIC_AUTOSTART:
+        simulator.start_traffic(settings.LIVE_TRAFFIC_RATE if settings.LIVE_TRAFFIC_RATE in ("low", "normal", "high") else "normal")
     yield
 
+    simulator.stop_traffic()
+    simulator.stop_scenario()
     if scheduler.running:
         scheduler.shutdown(wait=False)
     logger.info("ThreatLens shut down cleanly")
@@ -136,7 +141,6 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.add_middleware(GZipMiddleware, minimum_size=1024)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
@@ -208,6 +212,8 @@ app.include_router(alerts.router, prefix=f"{API}/alerts", tags=["SOAR & Threat I
 app.include_router(report.router, prefix=f"{API}/reports", tags=["SOC Reports"], dependencies=protected)
 app.include_router(assets.router, prefix=f"{API}/assets", tags=["Monitored Assets"], dependencies=protected)
 app.include_router(system.router, prefix=f"{API}/system", tags=["System"], dependencies=protected)
+app.include_router(demo.router, prefix=f"{API}/demo", tags=["Live Demo"])  # per-route auth
+app.include_router(stream.router, prefix=f"{API}/stream", tags=["Real-time Stream"])  # ticket auth for SSE
 
 
 @app.get("/", include_in_schema=False)

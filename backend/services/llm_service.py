@@ -28,6 +28,7 @@ _STAGE_IMPACT = {
     "Command and Control": "A compromised host may be under remote attacker control.",
     "Privilege Escalation": "An actor attempted to gain elevated privileges.",
     "Reconnaissance": "An actor is mapping the attack surface ahead of a potential intrusion.",
+    "Impact": "Systems or data may be destroyed or encrypted — business operations are directly at risk.",
 }
 
 

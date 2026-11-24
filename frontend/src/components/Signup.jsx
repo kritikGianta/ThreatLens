@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getApiErrorMessage } from '../services/api';
+import Logo from './brand/Logo';
 
 const fontSans = '"Inter", "Helvetica Neue", Arial, sans-serif';
 const fontMono = '"JetBrains Mono", monospace';
@@ -89,11 +90,10 @@ export default function Signup() {
           onClick={() => navigate('/')} 
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
         >
-          <span style={{ fontWeight: 900, fontSize: '1.3rem', letterSpacing: '-0.04em' }}>ThreatLens®</span>
-          <span style={{ fontFamily: fontMono, fontSize: '0.7rem', opacity: 0.4, letterSpacing: '0.15em' }}>{"// NODE REGISTRATION SHEET"}</span>
+          <Logo size={30} tone="dark" />
         </div>
         <Link to="/" style={{ fontFamily: fontMono, fontSize: '0.75rem', color: '#111111', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.05em' }}>
-          ← RETURN TO OVERVIEW
+          ← BACK TO HOME
         </Link>
       </div>
 
@@ -113,20 +113,20 @@ export default function Signup() {
         }}>
           <div>
             <div style={{ fontFamily: fontMono, fontSize: '0.7rem', fontWeight: 700, color: '#888', letterSpacing: '0.15em', marginBottom: '24px' }}>
-              01 // DEPLOYMENT PROTOCOL
+              GET STARTED
             </div>
 
             <h2 style={{ fontWeight: 900, fontSize: '2.2rem', letterSpacing: '-0.04em', margin: '0 0 32px', lineHeight: 1.1 }}>
-              Node Access<br/>Specification.
+              Create your<br/>SOC workspace.
             </h2>
 
-            {['IDENTITY SPECIFICATION', 'CONTACT TELEMETRY', 'SECURITY CREDENTIALS', 'ADMINISTRATIVE PRIVILEGES'].map((item, idx) => (
+            {['WATCH ATTACKS ON A LIVE MAP', 'TRIAGE CORRELATED CASES', 'AUTOMATE THE RESPONSE', 'ASK THE AI COPILOT'].map((item, idx) => (
               <div key={idx} style={{ borderBottom: '1px solid rgba(0,0,0,0.12)', padding: '16px 0', display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontFamily: fontMono, fontSize: '0.72rem', fontWeight: 700, color: '#111', letterSpacing: '0.08em' }}>
                   0{idx + 1} / {item}
                 </span>
                 <span style={{ fontFamily: fontMono, fontSize: '0.7rem', color: idx === 0 ? '#111' : '#888' }}>
-                  {idx === 0 ? 'REQUIRED' : 'PENDING'}
+                  {'✓'}
                 </span>
               </div>
             ))}
@@ -146,8 +146,8 @@ export default function Signup() {
           </div>
 
           <div style={{ fontFamily: fontMono, fontSize: '0.7rem', color: '#666', lineHeight: 1.6, borderTop: '1px solid rgba(0,0,0,0.12)', paddingTop: '24px', marginTop: '32px' }}>
-            <div style={{ fontWeight: 700, color: '#111', marginBottom: '4px' }}>→ Root Privilege Node</div>
-            <div>The initial deployed account initializes root SOC policy override parameters.</div>
+            <div style={{ fontWeight: 700, color: '#111', marginBottom: '4px' }}>→ First account becomes the administrator</div>
+            <div>The first person to sign up gets the admin role and can invite analysts and read-only viewers from Settings → Users.</div>
           </div>
         </div>
 
@@ -156,10 +156,10 @@ export default function Signup() {
           
           <div style={{ marginBottom: '36px' }}>
             <div style={{ fontFamily: fontMono, fontSize: '0.75rem', fontWeight: 700, color: '#111', letterSpacing: '0.12em', marginBottom: '8px' }}>
-              [ SECTION 02 : REGISTRATION PARAMETERS ]
+              NEW ACCOUNT
             </div>
             <h1 style={{ fontSize: '2.8rem', fontWeight: 900, letterSpacing: '-0.04em', margin: 0, lineHeight: 1 }}>
-              Create Access.
+              Create account.
             </h1>
           </div>
 
@@ -189,7 +189,7 @@ export default function Signup() {
               {/* Field 1: Username */}
               <div className={`ledger-row ${focused === 'username' ? 'ledger-row-focused' : ''}`}>
                 <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'username' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  01 / USERNAME IDENTIFIER *
+                  USERNAME *
                 </label>
                 <input className="ledger-input" type="text" placeholder="analyst_01"
                   value={form.username} onChange={e => setForm({ ...form, username: e.target.value })}
@@ -200,7 +200,7 @@ export default function Signup() {
               {/* Field 2: Full Name */}
               <div className={`ledger-row ${focused === 'full_name' ? 'ledger-row-focused' : ''}`}>
                 <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'full_name' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  02 / OPERATOR FULL NAME
+                  FULL NAME
                 </label>
                 <input className="ledger-input" type="text" placeholder="Jane Smith"
                   value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })}
@@ -213,7 +213,7 @@ export default function Signup() {
               {/* Field 3: Email */}
               <div className={`ledger-row ${focused === 'email' ? 'ledger-row-focused' : ''}`}>
                 <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'email' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  03 / ENTERPRISE EMAIL *
+                  WORK EMAIL *
                 </label>
                 <input className="ledger-input" type="email" placeholder="analyst@company.com"
                   value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
@@ -224,7 +224,7 @@ export default function Signup() {
               {/* Field 4: Organization */}
               <div className={`ledger-row ${focused === 'org' ? 'ledger-row-focused' : ''}`}>
                 <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'org' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  04 / ORGANIZATION UNIT
+                  ORGANIZATION
                 </label>
                 <input className="ledger-input" type="text" placeholder="Acme Security Corp"
                   value={form.organization} onChange={e => setForm({ ...form, organization: e.target.value })}
@@ -237,7 +237,7 @@ export default function Signup() {
               <div className={`ledger-row ${focused === 'pass' ? 'ledger-row-focused' : ''}`}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'pass' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                    05 / PASSPHRASE *
+                    PASSWORD *
                   </label>
                   <span onClick={() => setShowPassword(!showPassword)} style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer', color: '#111', textDecoration: 'underline' }}>
                     {showPassword ? 'HIDE' : 'SHOW'}
@@ -252,9 +252,9 @@ export default function Signup() {
               {/* Field 6: Confirm */}
               <div className={`ledger-row ${focused === 'confirm' ? 'ledger-row-focused' : ''}`}>
                 <label style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: focused === 'confirm' ? '#111' : '#777', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  06 / CONFIRM PASSPHRASE *
+                  CONFIRM PASSWORD *
                 </label>
-                <input className="ledger-input" type={showPassword ? 'text' : 'password'} placeholder="Repeat passphrase"
+                <input className="ledger-input" type={showPassword ? 'text' : 'password'} placeholder="Repeat password"
                   value={form.confirm} onChange={e => setForm({ ...form, confirm: e.target.value })}
                   onFocus={() => setFocused('confirm')} onBlur={() => setFocused('')}
                   autoComplete="new-password" />
@@ -271,15 +271,15 @@ export default function Signup() {
                 opacity: loading ? 0.7 : 1, transition: 'all 0.2s',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center'
               }}>
-              <span>{loading ? '// DEPLOYING NODE PARAMETERS...' : 'INITIALIZE ANALYST NODE'}</span>
+              <span>{loading ? 'CREATING ACCOUNT…' : 'CREATE ACCOUNT'}</span>
               <span>→</span>
             </motion.button>
           </form>
 
           <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontFamily: fontSans, fontSize: '0.9rem', color: '#666' }}>Already deployed an analyst node?</span>
+            <span style={{ fontFamily: fontSans, fontSize: '0.9rem', color: '#666' }}>Already have an account?</span>
             <Link to="/login" style={{ fontFamily: fontMono, fontSize: '0.8rem', fontWeight: 700, color: '#111111', textDecoration: 'none', borderBottom: '2px solid #111111', paddingBottom: '4px', letterSpacing: '0.05em' }}>
-              ACCESS SESSION TERMINAL →
+              SIGN IN →
             </Link>
           </div>
 

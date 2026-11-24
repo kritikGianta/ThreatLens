@@ -14,7 +14,7 @@ from sqlalchemy import func as sqlfunc
 from sqlalchemy.orm import Session
 
 from config import settings
-from models.db_models import LogEntry
+from models.db_models import LogEntry, User
 from services.pipeline import process_log
 
 logger = logging.getLogger("threatlens.seeder")
@@ -44,6 +44,25 @@ def seed_demo_attacks(db: Session, force: bool = False) -> dict:
     db.commit()
     logger.info("Demo seed complete — %d logs, %d incidents", injected, incidents)
     return {"seeded": True, "logs": injected, "incidents": incidents}
+
+
+def ensure_demo_viewer(db: Session) -> None:
+    """Create/refresh a read-only account for judges and visitors when DEMO_VIEWER_PASSWORD is set."""
+    if not settings.DEMO_VIEWER_PASSWORD:
+        return
+    from services.auth_service import get_user_by_username, hash_password, verify_password
+
+    username = settings.DEMO_VIEWER_USERNAME
+    user = get_user_by_username(db, username)
+    if user is None:
+        db.add(User(email=f"{username}@demo.threatlens.local", username=username, full_name="Demo Viewer",
+                    hashed_password=hash_password(settings.DEMO_VIEWER_PASSWORD), role="viewer", organization="Demo"))
+        logger.info("Created read-only demo account '%s'", username)
+    else:
+        if not verify_password(settings.DEMO_VIEWER_PASSWORD, user.hashed_password):
+            user.hashed_password = hash_password(settings.DEMO_VIEWER_PASSWORD)
+        user.role, user.is_active = "viewer", True
+    db.commit()
 
 
 def _build_attack_scenario(now: datetime) -> list:

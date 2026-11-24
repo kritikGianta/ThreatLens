@@ -27,7 +27,7 @@ def _rx(pattern: str) -> re.Pattern:
 
 
 def _raw(parsed: Dict) -> str:
-    return parsed.get("raw") or ""
+    return parsed.get("raw_decoded") or parsed.get("raw") or ""
 
 
 # RFC 5737 documentation ranges model "external internet hosts" in examples and demos.
@@ -56,9 +56,23 @@ RX_PS_SUSPICIOUS = _rx(
     r"frombase64string|-(?:exec|executionpolicy)\s+bypass|-w(?:indowstyle)?\s+hidden|net\.webclient|"
     r"invoke-webrequest|invoke-mimikatz|add-mppreference|set-mppreference"
 )
-RX_CRED_DUMP = _rx(r"\b(?:lsass|mimikatz|procdump|sekurlsa|hashdump|ntds\.dit|comsvcs(?:\.dll)?|secretsdump|lazagne)\b")
-RX_LOG_CLEARED = _rx(r"(?:audit|event|security)\s+log\s+(?:was\s+)?cleared|wevtutil(?:\.exe)?\s+cl\b|clear-eventlog|remove-eventlog")
-RX_LATERAL = _rx(r"\b(?:psexe(?:c|svc)\w*|wmic|winrm|smbexec|wmiexec|dcomexec|invoke-command\s+-computername)\b")
+RX_CRED_DUMP = _rx(r"\b(?:lsass|mimikatz|procdump\w*|sekurlsa|hashdump|ntds\.dit|comsvcs(?:\.dll)?|secretsdump|lazagne|unshadow|rubeus|kekeo|nanodump|pypykatz)\b|/etc/shadow\b"
+                   r"|\breg(?:\.exe)?\s+save\s+hklm\\(?:sam|system|security)\b|\bntdsutil(?:\.exe)?\b.{0,120}\bifm\b")
+# lsass.exe as the *acting* process is normal (it handles every Windows logon: "Process Name:
+# C:\Windows\System32\lsass.exe"); only lsass as a *target* or in a command line indicates dumping.
+RX_LSASS_ACTOR = _rx(r"(?:Image|SourceImage|ParentImage|ProcessName|Process\s+Name|NewProcessName|Caller\s+Process\s+Name)\s*[:=]\s*\S*\\lsass\.exe")
+
+
+def _without_lsass_actor(text: str) -> str:
+    return RX_LSASS_ACTOR.sub(" ", text)
+
+
+RX_LOG_CLEARED = _rx(
+    r"(?:audit|event|security)\s+log\s+(?:was\s+)?cleared|wevtutil(?:\.exe)?\s+cl\b|clear-eventlog|remove-eventlog"
+    r"|\bhistory\s+-c\b|unset\s+histfile|shred\s+\S*(?:/var/log|\.log|bash_history)|rm\s+-[rf]+\s+\S*(?:/var/log|bash_history)"
+)
+RX_DOWNLOAD_EXEC = _rx(r"\b(?:curl|wget)\b[^|;&]{0,200}\|\s*(?:ba|z)?sh\b|\b(?:curl|wget)\b.{0,200}\s-o\s*/tmp/\S+\s*(?:;|&&)\s*(?:ba)?sh\b")
+RX_LATERAL = _rx(r"\b(?:psexe(?:c|svc)\w*|wmic\s+/node:|winrm|smbexec|wmiexec|dcomexec|invoke-command\s+-computername)")
 RX_EXFIL_TOOL = _rx(r"\b(?:curl|wget|ftp|sftp|scp|rsync|rclone|megacmd)\b")
 RX_EXFIL_VERB = _rx(r"\b(?:upload|exfil\w*|transfer|send|post|put)\b")
 RX_PERSISTENCE = _rx(
@@ -67,10 +81,54 @@ RX_PERSISTENCE = _rx(
 )
 RX_RECON = _rx(r"\b(?:nmap|masscan|zmap|enum4linux|nbtscan|nikto|gobuster|dirbuster|port\s*scan)\b")
 RX_PRIVESC = _rx(r"\b(?:sudo|runas|privilege\s+escalat\w*|elevation|uac\s+bypass|setuid|pkexec)\b")
-RX_C2 = _rx(r"\b(?:beacon\w*|c2|cobalt\s?strike|reverse\s+shell|meterpreter|callback|sliver|empire\s+agent)\b")
-RX_SQLI = _rx(r"(?:'|%27)\s*(?:or|and)\s*(?:'|%27)?\s*\d+\s*(?:'|%27)?\s*=\s*(?:'|%27)?\s*\d+|union(?:\s|\+|%20)+select|sleep\(\d+\)|xp_cmdshell|information_schema")
+RX_C2 = _rx(r"\b(?:beacon\w*|c2|cobalt\s?strike|reverse\s+shell|meterpreter|callback|sliver|empire\s+agent)\b"
+            r"|\\(?:MSSE-\d+-server|postex_[0-9a-f]{4}|status_\d+|msagent_[0-9a-f]+)")
+RX_SQLI = _rx(
+    r"(?:'|%27)\s*(?:or|and)\s*(?:'|%27)?\s*\d+\s*(?:'|%27)?\s*=\s*(?:'|%27)?\s*\d+"
+    r"|union(?:\s|\+|%20)+(?:all(?:\s|\+|%20)+)?select"
+    r"|\b(?:and|or)\s+(\d{2,})\s*=\s*\1\b"          # sqlmap boolean probes: AND 4821=4821
+    r"|order\s+by\s+\d+\s*(?:--|#)"
+    r"|(?:sleep|benchmark|pg_sleep)\s*\(\s*\d+"
+    r"|information_schema|\bsqlmap/"
+)
 RX_TRAVERSAL = _rx(r"\.\./\.\./|%2e%2e%2f|/etc/passwd|\.env\b|wp-config\.php")
 RX_WEBSHELL = _rx(r"\bweb\s?shell\b|\b(?:shell|cmd|c99|r57|b374k)\.(?:php|aspx?|jsp)\b")
+
+RX_RANSOM = _rx(
+    r"vssadmin(?:\.exe)?\s+delete\s+shadows|wbadmin(?:\.exe)?\s+delete\s+catalog|bcdedit(?:\.exe)?\s+.*recoveryenabled\s+no|"
+    r"wmic(?:\.exe)?\s+shadowcopy\s+delete|\bransom(?:ware|\s+note)\b|readme_decrypt|how_to_decrypt|"
+    r"files?\s+(?:were\s+)?encrypted"
+)
+RX_OFFICE_CHILD = _rx(r"\b(?:winword|excel|powerpnt|outlook)\.exe\b.{0,120}\b(?:powershell|cmd\.exe|wscript|cscript|mshta|rundll32|regsvr32)\b")
+# ── Windows behavioural detections (patterns used by public Sigma rules) ─────
+RX_UAC_BYPASS = _rx(
+    r"(?:ms-settings|mscfile|exefile|folder|launcher\.systemsettings)\\shell\\open\\command|DelegateExecute"
+    r"|\\(?:fodhelper|eventvwr|sdclt|computerdefaults|wsreset|slui|changepk)\.exe\b.{0,300}(?:cmd\.exe|powershell|ParentImage)"
+    r"|ICMLuaUtil|\bakagi(?:32|64)?\b|\buacme\b"
+)
+RX_LOLBIN = _rx(
+    r"\bmshta(?:\.exe)?\s+\S*(?:https?:|javascript:|vbscript:)|\brundll32(?:\.exe)?\s.{0,200}javascript:"
+    r"|\bregsvr32(?:\.exe)?\s.{0,200}/i:\s*\S*https?|scrobj\.dll|\bcertutil(?:\.exe)?\s.{0,200}-(?:urlcache|decode|encode)\b"
+    r"|\bbitsadmin(?:\.exe)?\s.{0,200}/(?:transfer|addfile|SetNotifyCmdLine)|\binstallutil(?:\.exe)?\s.{0,200}/(?:logfile|u)\b"
+    r"|\bmsbuild(?:\.exe)?\s.{0,200}\.(?:xml|csproj|proj)\b|\bodbcconf(?:\.exe)?\s.{0,200}(?:/a\s|-f\s)|\bcmstp(?:\.exe)?\s.{0,200}/s\b"
+    r"|\bmsxsl(?:\.exe)?\s|\bwmic(?:\.exe)?\s.{0,200}/format:\S*(?:https?|\.xsl)|\bforfiles(?:\.exe)?\s.{0,200}/c\s|\bpcalua(?:\.exe)?\s+-a\b"
+    r"|\bcontrol(?:\.exe)?\s.{0,80}\.cpl\b.{0,120}(?:\\temp\\|\\users\\public\\|appdata)"
+)
+RX_SUSPICIOUS_SERVICE = _rx(
+    r"(?:cmd(?:\.exe)?\s+/[ck]|powershell|%COMSPEC%|\\\\127\.0\.0\.1\\|\\ADMIN\$|\\Temp\\|\\Users\\Public\\|rundll32|mshta|\\AppData\\)"
+)
+RX_ADMIN_SHARE = _rx(r"(?:\\ADMIN\$|\\C\$|\\IPC\$).{0,400}(?:svcctl|atsvc|winreg|\.exe\b|\.dll\b|\.bat\b|\.ps1\b)")
+RX_DCSYNC = _rx(r"1131f6aa-9c07-11d1-f79f-00c04fc2dcd2|1131f6ad-9c07-11d1-f79f-00c04fc2dcd2|89e95b76-444d-4c62-991a-0facbeda640c|DS-Replication-Get-Changes")
+RX_KERBEROAST = _rx(r"TicketEncryptionType=0x17\b")
+RX_AD_DISCOVERY = _rx(
+    r"\bwhoami(?:\.exe)?\s+/(?:all|priv|groups)\b|\bnet1?(?:\.exe)?\s+(?:user|group|localgroup)\b.{0,80}(?:/domain|administrators|domain admins)"
+    r"|\bnltest(?:\.exe)?\s+/(?:dclist|domain_trusts|dsgetdc)|\bdsquery(?:\.exe)?\s|\badfind(?:\.exe)?\s|\b(?:sharp|blood)hound\b"
+    r"|Get-Net(?:Domain|User|Group|Computer)|Invoke-ShareFinder|\bquser(?:\.exe)?\b|\bqwinsta(?:\.exe)?\b"
+)
+RX_OFFICE_PARENT = _rx(r"\b(?:powershell|cmd|wscript|cscript|mshta|rundll32|regsvr32)\.exe\b.{0,600}ParentImage=[^=]{0,200}?\\(?:winword|excel|powerpnt|outlook)\.exe")
+RX_XP_CMDSHELL = _rx(r"\bxp_cmdshell\b")
+
+RX_BANNER_PROBE = _rx(r"did not receive identification string|bad protocol version identification|kex_exchange_identification|banner exchange:.*invalid format")
 
 SENSITIVE_PORTS = {"21", "22", "23", "135", "139", "445", "1433", "3306", "3389", "4444", "5432", "5900", "6379"}
 EXFIL_BYTES_THRESHOLD = 100 * 1024 * 1024  # 100 MB
@@ -201,7 +259,7 @@ DETECTION_RULES = [
     },
     {
         "name": "Credential Dumping Attempt",
-        "check": lambda p, s: bool(RX_CRED_DUMP.search(_raw(p))),
+        "check": lambda p, s: bool(RX_CRED_DUMP.search(_without_lsass_actor(_raw(p)))),
         "impact": 25, "confidence": 0.90, "mitre": "T1003", "stage": "Credential Access",
     },
     {
@@ -240,6 +298,66 @@ DETECTION_RULES = [
         "name": "Command and Control Communication",
         "check": lambda p, s: bool(RX_C2.search(_raw(p))),
         "impact": 25, "confidence": 0.90, "mitre": "T1071", "stage": "Command and Control",
+    },
+    {
+        "name": "Remote Script Download and Execute",
+        "check": lambda p, s: bool(RX_DOWNLOAD_EXEC.search(_raw(p))),
+        "impact": 15, "confidence": 0.85, "mitre": "T1105", "stage": "Command and Control",
+    },
+    {
+        "name": "UAC Bypass Attempt",
+        "check": lambda p, s: bool(RX_UAC_BYPASS.search(_raw(p))),
+        "impact": 20, "confidence": 0.8, "mitre": "T1548", "stage": "Privilege Escalation",
+    },
+    {
+        "name": "Living-off-the-Land Binary Abuse",
+        "check": lambda p, s: bool(RX_LOLBIN.search(_raw(p))),
+        "impact": 15, "confidence": 0.8, "mitre": "T1218", "stage": "Defense Evasion",
+    },
+    {
+        "name": "Suspicious Service Installation",
+        "check": lambda p, s: p.get("event_id") in ("7045", "4697") and bool(RX_SUSPICIOUS_SERVICE.search(_raw(p))),
+        "impact": 20, "confidence": 0.8, "mitre": "T1543", "stage": "Persistence",
+    },
+    {
+        "name": "Remote Admin Share Access",
+        "check": lambda p, s: p.get("event_id") in ("5140", "5145") and bool(RX_ADMIN_SHARE.search(_raw(p))),
+        "impact": 20, "confidence": 0.75, "mitre": "T1021", "stage": "Lateral Movement",
+    },
+    {
+        "name": "DCSync Replication Request",
+        "check": lambda p, s: bool(RX_DCSYNC.search(_raw(p))),
+        "impact": 25, "confidence": 0.9, "mitre": "T1003", "stage": "Credential Access",
+    },
+    {
+        "name": "Kerberoasting",
+        "check": lambda p, s: p.get("event_id") == "4769" and bool(RX_KERBEROAST.search(_raw(p))),
+        "impact": 20, "confidence": 0.75, "mitre": "T1558", "stage": "Credential Access",
+    },
+    {
+        "name": "Active Directory Discovery",
+        "check": lambda p, s: bool(RX_AD_DISCOVERY.search(_raw(p))),
+        "impact": 10, "confidence": 0.6, "mitre": "T1087", "stage": "Discovery",
+    },
+    {
+        "name": "MSSQL Command Execution (xp_cmdshell)",
+        "check": lambda p, s: bool(RX_XP_CMDSHELL.search(_raw(p))),
+        "impact": 20, "confidence": 0.85, "mitre": "T1505", "stage": "Execution",
+    },
+    {
+        "name": "Ransomware Activity",
+        "check": lambda p, s: bool(RX_RANSOM.search(_raw(p))),
+        "impact": 25, "confidence": 0.95, "mitre": "T1486", "stage": "Impact", "severity_override": "CRITICAL",
+    },
+    {
+        "name": "Malicious Office Macro Execution",
+        "check": lambda p, s: bool(RX_OFFICE_CHILD.search(_raw(p)) or RX_OFFICE_PARENT.search(_raw(p))),
+        "impact": 20, "confidence": 0.85, "mitre": "T1204", "stage": "Execution",
+    },
+    {
+        "name": "Service Banner Probing",
+        "check": lambda p, s: bool(RX_BANNER_PROBE.search(_raw(p))),
+        "impact": 5, "confidence": 0.55, "mitre": "T1046", "stage": "Reconnaissance",
     },
     {
         "name": "SQL Injection Attempt",
@@ -285,13 +403,29 @@ ATTACK_CHAINS = [
     ({"Initial Access", "Credential Access", "Lateral Movement"}, "Breach -> Credential Theft -> Lateral Spread"),
     ({"Initial Access", "Execution", "Lateral Movement", "Exfiltration"}, "Complete APT Chain Detected"),
     ({"Command and Control", "Exfiltration"}, "C2 Active -> Data Exfiltration"),
+    ({"Initial Access", "Execution", "Impact"}, "Intrusion -> Ransomware Impact"),
+    ({"Credential Access", "Lateral Movement", "Impact"}, "Full Ransomware Kill Chain"),
 ]
 
 
+# In web-server access logs the requested URL is attacker-controlled input: a scanner requesting
+# "/ftp/upload" is reconnaissance, not exfiltration. Only web-attack rules apply to that context.
+WEB_ACCESS_RULES = {
+    "SQL Injection Attempt",
+    "Web Path Traversal / Sensitive File Probe",
+    "Web Shell Upload Attempt",
+    "Reconnaissance Activity",
+    "Remote Script Download and Execute",
+}
+
+
 def evaluate_rules(parsed_log: Dict, ip_state: Optional[IPState] = None) -> List[Dict]:
-    """Run every rule against a parsed log (pure function, used by tests)."""
+    """Run every applicable rule against a parsed log (pure function, used by tests)."""
+    web_context = parsed_log.get("log_type") == "web_server"
     matched = []
     for rule in DETECTION_RULES:
+        if web_context and rule["name"] not in WEB_ACCESS_RULES:
+            continue
         try:
             if rule["check"](parsed_log, ip_state):
                 matched.append(rule)

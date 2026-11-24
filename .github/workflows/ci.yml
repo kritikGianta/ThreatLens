@@ -87,4 +87,4 @@ jobs:
     needs: [backend, frontend]
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose build
+      - run: docker compose --profile lab build

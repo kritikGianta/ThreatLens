@@ -6,6 +6,8 @@ import {
   } from 'recharts';
 import api, { getApiErrorMessage } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useLive, useLiveRefresh } from '../contexts/LiveEventsContext';
+import LiveEventFeed from './live/LiveEventFeed';
 import InfoHint from './soc/InfoHint';
 import '../styles/globals.css';
 
@@ -200,6 +202,7 @@ export default function Dashboard() {
   const [trendRange, setTrendRange] = useState('7d');
   const navigate = useNavigate();
   const { user } = useAuth();
+  const live = useLive();
 
   const severityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
 
@@ -232,6 +235,8 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  useLiveRefresh(() => fetchStats(), ['incident'], 2000);
 
   useEffect(() => {
     fetchStats();
@@ -348,42 +353,33 @@ export default function Dashboard() {
             </div>
           </Panel>
 
+          <Panel title="Live Event Stream" hint="Every log processed by the pipeline, as it happens. Threats are highlighted.">
+            <LiveEventFeed limit={12} />
+          </Panel>
+
         </div>
 
         {/* RIGHT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
-          {/* Gradient Status Card (Like "Your Card") */}
+          {/* Detection engine: real-time status and measured performance */}
           <div>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>System Status</h3>
-            <div style={{
-              background: 'linear-gradient(135deg, var(--accent-primary) 0%, #A78BFA 100%)',
-              borderRadius: '24px',
-              padding: '24px',
-              color: '#FFFFFF',
-              boxShadow: '0 20px 40px -10px var(--accent-primary-glow)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              {/* Glass circles decoration */}
-              <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-              <div style={{ position: 'absolute', bottom: '-40px', right: '40px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-              
-              <div style={{ fontWeight: 600, fontSize: '15px', marginBottom: '32px' }}>ThreatLens Engine</div>
-              
-              <div style={{ display: 'flex', gap: '16px', fontSize: '16px', fontFamily: 'var(--font-mono)', opacity: 0.9, marginBottom: '32px' }}>
-                <span>****</span><span>****</span><span>****</span><span>LIVE</span>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>Detection Engine</h3>
+            <div className="engine-card">
+              <div className="engine-card-top">
+                <span>Real-time pipeline</span>
+                <span className={`engine-state ${live?.connected ? 'es-on' : 'es-off'}`}>
+                  <span className="engine-dot" />{live?.connected ? 'STREAMING' : 'RECONNECTING'}
+                </span>
               </div>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', fontSize: '12px', opacity: 0.8 }}>
-                <div>
-                  <div style={{ marginBottom: '4px' }}>Total Logs</div>
-                  <div style={{ fontSize: '18px', fontWeight: 700, opacity: 1 }}>{totalLogs.toLocaleString()}</div>
-                </div>
-                <div>
-                  <div style={{ marginBottom: '4px' }}>Uptime</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, opacity: 1 }}>99.9%</div>
-                </div>
+              <div className="engine-rate">
+                <strong>{live?.rate ?? 0}</strong><span>events / min</span>
+              </div>
+              <div className="engine-grid">
+                <div><span>Total logs</span><strong>{totalLogs.toLocaleString()}</strong></div>
+                <div><span>Latency p50</span><strong>{stats?.performance?.pipeline_latency_ms?.samples ? `${stats?.performance?.pipeline_latency_ms.p50} ms` : '—'}</strong></div>
+                <div><span>Latency p95</span><strong>{stats?.performance?.pipeline_latency_ms?.samples ? `${stats?.performance?.pipeline_latency_ms.p95} ms` : '—'}</strong></div>
+                <div><span>Threat-intel IOCs</span><strong>{(stats?.threat_intel_iocs || 0).toLocaleString()}</strong></div>
               </div>
             </div>
           </div>

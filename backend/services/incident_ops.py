@@ -186,11 +186,17 @@ def create_or_update_incident(
         incident.alert_count = (incident.alert_count or 1) + 1
         incident.last_seen = now
         incident.risk_score = max(incident.risk_score or 0, risk.get("risk_score", 0))
-        if SEVERITY_RANK.get(risk.get("risk_level", "LOW"), 0) >= SEVERITY_RANK.get(incident.risk_level or "LOW", 0):
+        previous_rank = SEVERITY_RANK.get(incident.risk_level or "LOW", 0)
+        if SEVERITY_RANK.get(risk.get("risk_level", "LOW"), 0) >= previous_rank:
             incident.risk_level = risk.get("risk_level", incident.risk_level)
         incident.source = source
         incident.mitre_technique = detection.get("mitre_candidate") or incident.mitre_technique
+        for preserved in ("soar_actions", "llm_summary"):
+            if (incident.soc_summary or {}).get(preserved) and not summary.get(preserved):
+                summary[preserved] = incident.soc_summary[preserved]
         incident.soc_summary = summary
+        # Transient flag read by the pipeline: severity went up, so SOAR rules are re-evaluated.
+        incident._escalated = SEVERITY_RANK.get(incident.risk_level or "LOW", 0) > previous_rank
         incident.explanation = explanation
         incident.recommended_actions = recommended_actions
         incident.campaign_id = campaign_id or incident.campaign_id

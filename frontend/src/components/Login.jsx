@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getApiErrorMessage } from '../services/api';
+import Logo from './brand/Logo';
 
 const fontSans = '"Inter", "Helvetica Neue", Arial, sans-serif';
 const fontMono = '"JetBrains Mono", monospace';
@@ -80,11 +81,10 @@ export default function Login() {
           onClick={() => navigate('/')} 
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
         >
-          <span style={{ fontWeight: 900, fontSize: '1.3rem', letterSpacing: '-0.04em' }}>ThreatLens®</span>
-          <span style={{ fontFamily: fontMono, fontSize: '0.7rem', opacity: 0.4, letterSpacing: '0.15em' }}>{"// PROTOCOL 4.2"}</span>
+          <Logo size={30} tone="dark" />
         </div>
         <Link to="/" style={{ fontFamily: fontMono, fontSize: '0.75rem', color: '#111111', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.05em' }}>
-          ← RETURN TO OVERVIEW
+          ← BACK TO HOME
         </Link>
       </div>
 
@@ -103,10 +103,10 @@ export default function Login() {
         }}>
           <div>
             <div style={{ fontFamily: fontMono, fontSize: '0.7rem', fontWeight: 700, color: '#888', letterSpacing: '0.15em', marginBottom: '24px' }}>
-              01 // IDENTITY VERIFICATION LEDGER
+              SECURITY OPERATIONS PLATFORM
             </div>
             
-            {['Autonomous', 'Threat Defense', 'Command.'].map((line, idx) => (
+            {['Detect.', 'Correlate.', 'Respond.'].map((line, idx) => (
               <div key={idx} style={{ borderBottom: '1px solid rgba(0,0,0,0.12)', paddingBottom: '12px', marginBottom: '12px' }}>
                 <span style={{ fontWeight: 900, fontSize: 'clamp(2.4rem, 4.6vw, 3.5rem)', letterSpacing: '-0.05em', lineHeight: 1 }}>{line}</span>
               </div>
@@ -125,16 +125,16 @@ export default function Login() {
               />
             </figure>
             <p style={{ fontSize: '1.2rem', lineHeight: 1.6, fontWeight: 400, color: '#444', margin: '0 0 24px', maxWidth: '440px' }}>
-              Establish secure identity credentials to initiate root telemetry streams and neural Copilot interfaces.
+              Sign in to your SOC workspace: live incidents, attack campaigns, threat intelligence and the AI copilot.
             </p>
             <div style={{ display: 'flex', gap: '32px', paddingTop: '24px', borderTop: '1px solid rgba(0,0,0,0.12)' }}>
               <div>
-                <div style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>SECURITY TIER</div>
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginTop: '4px' }}>ZERO-TRUST v2</div>
+                <div style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>AUTHENTICATION</div>
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginTop: '4px' }}>JWT + refresh tokens</div>
               </div>
               <div>
-                <div style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>ENCRYPTION</div>
-                <div style={{ fontWeight: 800, fontSize: '1rem', marginTop: '4px' }}>AES-256-GCM</div>
+                <div style={{ fontFamily: fontMono, fontSize: '0.65rem', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>PASSWORDS</div>
+                <div style={{ fontWeight: 800, fontSize: '1rem', marginTop: '4px' }}>bcrypt-hashed</div>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function Login() {
           
           <div style={{ marginBottom: '48px' }}>
             <div style={{ fontFamily: fontMono, fontSize: '0.75rem', fontWeight: 700, color: '#111', letterSpacing: '0.12em', marginBottom: '8px' }}>
-              [ SECTION 02 : CREDENTIAL ENTRY ]
+              WELCOME BACK
             </div>
             <h1 style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '-0.04em', margin: 0, lineHeight: 1 }}>
               Sign In.
@@ -185,7 +185,7 @@ export default function Login() {
                   textTransform: 'uppercase', 
                   letterSpacing: '0.1em' 
                 }}>
-                  01 / ANALYST IDENTIFIER OR EMAIL
+                  USERNAME OR EMAIL
                 </label>
                 {focused === 'login' && <span style={{ fontFamily: fontMono, fontSize: '0.65rem', color: '#111' }}>● ACTIVE</span>}
               </div>
@@ -213,13 +213,13 @@ export default function Login() {
                   textTransform: 'uppercase', 
                   letterSpacing: '0.1em' 
                 }}>
-                  02 / SECURITY PASSPHRASE
+                  PASSWORD
                 </label>
                 <span 
                   onClick={() => setShowPassword(!showPassword)} 
                   style={{ fontFamily: fontMono, fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer', color: '#111', textDecoration: 'underline' }}
                 >
-                  {showPassword ? 'HIDE PASSPHRASE' : 'REVEAL PASSPHRASE'}
+                  {showPassword ? 'HIDE' : 'SHOW'}
                 </span>
               </div>
               <input 
@@ -259,14 +259,14 @@ export default function Login() {
                 alignItems: 'center'
               }}
             >
-              <span>{loading ? '// VERIFYING CREDENTIALS...' : 'AUTHENTICATE SESSION'}</span>
+              <span>{loading ? 'SIGNING IN…' : 'SIGN IN'}</span>
               <span>→</span>
             </motion.button>
           </form>
 
           {/* Ledger Footer */}
           <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid rgba(0,0,0,0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontFamily: fontSans, fontSize: '0.9rem', color: '#666' }}>Unregistered operator node?</span>
+            <span style={{ fontFamily: fontSans, fontSize: '0.9rem', color: '#666' }}>New to ThreatLens?</span>
             <Link 
               to="/signup" 
               style={{ 
@@ -280,7 +280,7 @@ export default function Login() {
                 letterSpacing: '0.05em'
               }}
             >
-              INITIALIZE ACCESS PROTOCOL →
+              CREATE AN ACCOUNT →
             </Link>
           </div>
 

@@ -117,6 +117,12 @@ class Settings:
     REAL_LOG_BOOTSTRAP_MINUTES = _int("REAL_LOG_BOOTSTRAP_MINUTES", 120)
     REAL_LOG_STATE_PATH = os.getenv("REAL_LOG_STATE_PATH", str(DATA_DIR / "real_log_collector_state.json"))
 
+    # Live demo: background telemetry simulator and a read-only account for judges/visitors.
+    LIVE_TRAFFIC_AUTOSTART = _bool("LIVE_TRAFFIC_AUTOSTART", False)
+    LIVE_TRAFFIC_RATE = os.getenv("LIVE_TRAFFIC_RATE", "normal")
+    DEMO_VIEWER_USERNAME = os.getenv("DEMO_VIEWER_USERNAME", "judge")
+    DEMO_VIEWER_PASSWORD = _optional("DEMO_VIEWER_PASSWORD")
+
     # Retention defaults (overridable at runtime from the Settings page).
     MAX_LOG_ENTRIES = _int("MAX_LOG_ENTRIES", 100_000)
     MAX_INCIDENTS = _int("MAX_INCIDENTS", 25_000)
